@@ -10,6 +10,8 @@ import (
 	"github.com/monkeydioude/drannoc/internal/encrypt"
 )
 
+const tokenRemakeThreshold = 0.8
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
@@ -43,9 +45,14 @@ func (a *AuthToken) String() string {
 	return string(data)
 }
 
+// Update proceeds to token updates. Should be call before storing it
+func (a *AuthToken) Update() {
+	a.LastUsed = time.Now().Unix()
+}
+
 // IsValid verifies a token is still valid
 func (a *AuthToken) IsValid(date time.Time) bool {
-	return date.Before(time.Unix(a.Created, 0))
+	return date.Before(time.Unix(a.Expires, 0))
 }
 
 // IsValidNow is the same as IsValid, but now
@@ -53,29 +60,46 @@ func (a *AuthToken) IsValidNow() bool {
 	return a.IsValid(time.Now())
 }
 
+// ShouldRemake verifies if the token shouldnt be re-generated
+// before expiration. Expires * tokenRemakeThreshold < remake < Expires
+func (a *AuthToken) ShouldRemake(date time.Time) bool {
+	if !a.IsValid(date) {
+		return false
+	}
+
+	t := int64(float64(time.Unix(a.Expires, 0).Unix()) * tokenRemakeThreshold)
+
+	return date.After(time.Unix(t, 0))
+}
+
+// ShouldRemakeNow is the same as ShouldRemake, but now
+func (a *AuthToken) ShouldRemakeNow() bool {
+	return a.ShouldRemake(time.Now())
+}
+
 // LoadAuthToken retrieve
-func LoadAuthToken(token string) (*AuthToken, error) {
+func LoadAuthToken(tokenID string) (*AuthToken, error) {
 	bucket := bucket.AuthToken(nil)
 
-	data, err := bucket.Get(token)
+	data, err := bucket.Get(tokenID)
 	if err != nil {
 		return nil, err
 	}
-	authToken := &AuthToken{
-		token: token,
-	}
 
+	authToken := &AuthToken{
+		token: tokenID,
+	}
 	return authToken, json.Unmarshal(data, authToken)
 }
 
 // NewAuthToken generates a new Authentification token along
 // with its time related data
-func NewAuthToken(passwd string, duration time.Duration, date time.Time) *AuthToken {
+func NewAuthToken(passwd string, start time.Time, duration time.Duration) *AuthToken {
 	const len int = 12
 	var buffer bytes.Buffer
-	created := date.Unix()
+	created := start.Unix()
 	lastUsed := created
-	expires := date.Add(duration).Unix()
+	expires := start.Add(duration).Unix()
 
 	for i := 0; i < len; i++ {
 		buffer.WriteByte(byte(rand.Intn(50)))

@@ -1,13 +1,23 @@
 package response
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/render"
 	log "github.com/sirupsen/logrus"
 )
 
+// Redirect = 301
+func Redirect(c *gin.Context, url string) {
+	c.JSON(301, gin.H{
+		"url": url,
+	})
+}
+
 // BadRequest = 400 response code
 func BadRequest(c *gin.Context, msg string) {
-	log.Info(msg)
 	c.JSON(400, gin.H{
 		"message": msg,
 	})
@@ -23,6 +33,9 @@ func ServiceUnavailable(c *gin.Context, msg string) {
 
 // Ok = 200 response code
 func Ok(c *gin.Context, res map[string]interface{}) {
-	log.Info(res)
-	c.JSON(200, res)
+	data, _ := json.Marshal(res)
+	c.Render(http.StatusOK, render.Data{
+		ContentType: "application/json",
+		Data:        data,
+	})
 }

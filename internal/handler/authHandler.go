@@ -29,15 +29,13 @@ func Authenticate(c *gin.Context) {
 	}
 
 	encPasswd := entity.NewAuth(login, password).GetPassword()
-
 	if string(u) != encPasswd {
 		res.BadRequest(c, fmt.Sprintf("Wrong password for `%s`\n", login))
 		return
 	}
 
-	token := entity.NewAuthToken(encPasswd, tokenDuration, time.Now())
+	token := entity.NewAuthToken(encPasswd, time.Now(), tokenDuration)
 	_, err = authTokenBucket.Store(token)
-
 	if err != nil {
 		res.ServiceUnavailable(c, fmt.Sprintf("Could not store authToken for user `%s`\n", login))
 		return

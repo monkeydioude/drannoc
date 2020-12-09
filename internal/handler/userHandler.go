@@ -15,8 +15,8 @@ const (
 	passwordKey string = "p"
 )
 
-// CreateUser handles user creation form (PUT method)
-func CreateUser(c *gin.Context) {
+// UserCreate handles user creation form (POST method)
+func UserCreate(c *gin.Context) {
 	login := c.PostForm(loginKey)
 	password := c.PostForm(passwordKey)
 	authBucket := bucket.Auth(nil)
@@ -34,7 +34,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	token := entity.NewAuthToken(auth.GetPassword(), tokenDuration, time.Now())
+	token := entity.NewAuthToken(auth.GetPassword(), time.Now(), tokenDuration)
 	_, err = authTokenBucket.Store(token)
 
 	if err != nil {

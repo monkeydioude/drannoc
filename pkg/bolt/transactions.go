@@ -1,6 +1,7 @@
 package bolt
 
 import (
+	"bytes"
 	"fmt"
 	"time"
 
@@ -73,7 +74,7 @@ type GetTransaction struct {
 // Transaction here describes a view call of a key inside a bucket
 // and returns its content
 func (t *GetTransaction) Transaction(bucket *Bucket) ([]byte, error) {
-	var value []byte
+	var value bytes.Buffer
 
 	boltdb, err := bolt.Open(bucket.DB().Path(), RW, &bolt.Options{Timeout: 1 * time.Second})
 
@@ -87,11 +88,15 @@ func (t *GetTransaction) Transaction(bucket *Bucket) ([]byte, error) {
 		if b == nil {
 			return fmt.Errorf("Bucket %s not found", string(bucket.Name()))
 		}
-		value = b.Get(t.Key())
+		value.Write(b.Get(t.Key()))
 		return nil
 	})
 
-	return value, err
+	if err != nil {
+		return nil, err
+	}
+
+	return value.Bytes(), err
 }
 
 // Get generates a GetTransaction *struct
