@@ -1,12 +1,9 @@
 package handler
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/bucket"
-	"github.com/monkeydioude/drannoc/internal/entity"
+	"github.com/monkeydioude/drannoc/internal/body"
+	"github.com/monkeydioude/drannoc/internal/service"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 
@@ -15,30 +12,24 @@ const (
 	passwordKey string = "p"
 )
 
-// UserCreate handles user creation form (POST method)
+// UserCreate handles user creation form
+// POST /user
 func UserCreate(c *gin.Context) {
-	login := c.PostForm(loginKey)
-	password := c.PostForm(passwordKey)
-	authBucket := bucket.Auth(nil)
-	authTokenBucket := bucket.AuthToken(nil)
-
-	if u, _ := authBucket.Get(login); u != nil {
-		res.BadRequest(c, fmt.Sprintf("Username `%s` already exists\n", login))
+	loginData, err := body.NewLoginData(c.Request.Body)
+	if err != nil {
+		res.Write(c, res.BadRequest(err.Error()))
 		return
 	}
 
-	auth := entity.NewAuth(login, password)
-	_, err := authBucket.Store(auth)
+	token, err := service.UserCreate(loginData)
+
 	if err != nil {
-		res.BadRequest(c, err.Error())
+		res.Write(c, res.BadRequest(err.Error()))
 		return
 	}
 
-	token := entity.NewAuthToken(auth.GetPassword(), time.Now(), tokenDuration)
-	_, err = authTokenBucket.Store(token)
-
-	if err != nil {
-		res.ServiceUnavailable(c, fmt.Sprintf("Could not store authToken for user `%s`\n", login))
+	if token == nil {
+		res.ServiceUnavailable("Could not create user", "Could not create user")
 		return
 	}
 
@@ -48,20 +39,36 @@ func UserCreate(c *gin.Context) {
 	})
 }
 
-// UserLogin handles user login form (POST method)
+// UserLogin handles user login form
+// POST /user/login
 func UserLogin(c *gin.Context) {
-	userBucket := bucket.User(nil)
-	login := c.PostForm(loginKey)
+	// loginData, err := body.NewLoginData(c.Request.Body)
+	// if err != nil {
+	// 	res.Write(c, res.BadRequest(err.Error()))
+	// 	return
+	// }
+	// userBucket := bucket.User(nil)
 
-	u, err := userBucket.Get(login)
-	if err != nil {
-		res.BadRequest(c, err.Error())
-		return
-	}
+	// u, err := userBucket.Get(loginData.Login)
+	// if err != nil {
+	// 	res.Write(c, res.ServiceUnavailable("Could not retrieve user", err.Error()))
+	// 	return
+	// }
 
-	if u == nil {
-		res.BadRequest(c, fmt.Sprintf("Username `%s` does not exist", login))
-		return
-	}
-	Authenticate(c)
+	// if u == nil {
+	// 	res.Write(c, res.BadRequest(fmt.Sprintf("Username `%s` does not exist", loginData.Login)))
+	// 	return
+	// }
+
+	// authToken, err := service.Authenticate(loginData)
+
+	// if err != nil {
+	// 	res.Write(c, res.ServiceUnavailable("Could not authenticate", err.Error()))
+	// 	return
+	// }
+
+	// res.Ok(c, gin.H{
+	// 	"token": authToken.GetToken(),
+	// 	"data":  authToken,
+	// })
 }

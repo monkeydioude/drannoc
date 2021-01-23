@@ -25,14 +25,19 @@ type AuthToken struct {
 	token    string
 }
 
-// GetKey the bolt.Entity interface
-func (a *AuthToken) GetKey() string {
+// GetID the bolt.Entity interface
+func (a *AuthToken) GetID() string {
 	return a.token
+}
+
+// SetID the bolt.Entity interface
+func (a *AuthToken) SetID(token string) {
+	a.token = token
 }
 
 // GetToken just gets the token aka the key
 func (a *AuthToken) GetToken() string {
-	return a.GetKey()
+	return a.GetID()
 }
 
 // String implements the Stringer interface

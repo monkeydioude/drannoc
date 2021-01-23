@@ -39,9 +39,3 @@ func (db *Database) Bucket(bucket string) *Bucket {
 func NewDatabase(path string) *Database {
 	return &Database{path}
 }
-
-// Entity should be implemented by entities
-type Entity interface {
-	GetKey() string
-	String() string
-}

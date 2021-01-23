@@ -1,5 +1,7 @@
 package bolt
 
+import "github.com/monkeydioude/drannoc/pkg/entity"
+
 // Bucket describes a bolt bucket. No need for interface ?
 type Bucket struct {
 	name []byte
@@ -26,14 +28,19 @@ func (b *Bucket) Get(key string) ([]byte, error) {
 	return b.Do(Get(key))
 }
 
+// Delete is a helper for calling a view Transaction
+func (b *Bucket) Delete(key string) ([]byte, error) {
+	return b.Do(Delete(key))
+}
+
 // Put is a helper for calling an update Transaction
 func (b *Bucket) Put(key, value string) ([]byte, error) {
 	return b.Do(Put(key, value))
 }
 
 // Store handles putting Storable struct into a bucket
-func (b *Bucket) Store(entity Entity) ([]byte, error) {
-	return b.Put(entity.GetKey(), entity.String())
+func (b *Bucket) Store(entity entity.Entity) ([]byte, error) {
+	return b.Put(entity.GetID(), entity.String())
 }
 
 // NewBucket instantiate a Bucket struct

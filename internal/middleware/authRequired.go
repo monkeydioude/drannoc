@@ -14,19 +14,19 @@ func AuthRequired(c *gin.Context) {
 	tokenID := c.GetHeader("auth-token")
 
 	if tokenID == "" {
-		res.Redirect(c, "/login")
+		res.Write(c, res.Redirect("/login"))
 		return
 	}
 	token, err := entity.LoadAuthToken(tokenID)
 	fmt.Println(token.GetToken())
 
 	if err != nil {
-		res.BadRequest(c, err.Error())
+		res.Write(c, res.BadRequest(err.Error()))
 		return
 	}
 
 	if token == nil || token.GetToken() != tokenID || !token.IsValidNow() {
-		res.Redirect(c, "/login")
+		res.Write(c, res.Redirect("/login"))
 		return
 	}
 }

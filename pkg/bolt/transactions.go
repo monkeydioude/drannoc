@@ -107,3 +107,43 @@ func Get(key string) *GetTransaction {
 		},
 	}
 }
+
+// DeleteTransaction wraps a boltDB view transaction
+type DeleteTransaction struct {
+	BaseTransaction
+}
+
+// Transaction here describes a view call of a key inside a bucket
+// and returns its content
+func (t *DeleteTransaction) Transaction(bucket *Bucket) ([]byte, error) {
+	boltdb, err := bolt.Open(bucket.DB().Path(), RW, &bolt.Options{Timeout: 1 * time.Second})
+
+	if err != nil {
+		return nil, err
+	}
+	defer boltdb.Close()
+
+	err = boltdb.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket.Name())
+		if b == nil {
+			return fmt.Errorf("Bucket %s not found", string(bucket.Name()))
+		}
+
+		return b.Delete(t.Key())
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, err
+}
+
+// Delete generates a GetTransaction *struct
+func Delete(key string) *DeleteTransaction {
+	return &DeleteTransaction{
+		BaseTransaction{
+			key: []byte(key),
+		},
+	}
+}
