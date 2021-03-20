@@ -2,16 +2,17 @@ package entity
 
 import (
 	"encoding/json"
-	"time"
 
+	"github.com/monkeydioude/drannoc/internal/encrypt"
 	log "github.com/sirupsen/logrus"
 )
 
 // User represents the data of a user
 type User struct {
-	ID      string `json:"id"`
-	Login   string `json:"login"`
-	Created int    `json:"created"`
+	ID       string `json:"id"`
+	Login    string `json:"login"`
+	Created  int64  `json:"created"`
+	Password string `json:"password"`
 	// AuthID string `json:"authID"`
 	// Email  string `json:"email"`
 }
@@ -38,9 +39,13 @@ func (u *User) SetID(id string) {
 }
 
 // NewUser creates a pointer to a new User instance
-func NewUser(login string) *User {
-	return &User{
-		Login:   login,
-		Created: time.Now().Second(),
+func NewUser(login, password string) (*User, error) {
+	h, err := encrypt.SCrypt(password)
+	if err != nil {
+		return nil, err
 	}
+	return &User{
+		Login:    login,
+		Password: h,
+	}, nil
 }

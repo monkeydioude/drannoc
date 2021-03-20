@@ -76,9 +76,9 @@ func NewWithMessage(code int, msg string) *Response {
 	}
 }
 
-// Redirect = 301
+// Redirect = 302
 func Redirect(url string) *Response {
-	return NewWithBody(301, "url", url)
+	return NewWithBody(302, "url", url)
 }
 
 // BadRequest = 400 response code

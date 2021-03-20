@@ -17,6 +17,8 @@ type Repository interface {
 	GetContext() context.Context
 	CancelContext()
 	Store(entity entity.Entity) error
+	Load() (entity.Entity, error)
+	Delete(entity.Entity) error
 }
 
 // BaseRepo holds base generic repository functions.

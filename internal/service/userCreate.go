@@ -2,46 +2,55 @@ package service
 
 import (
 	"errors"
-	"time"
 
 	"github.com/monkeydioude/drannoc/internal/body"
-	"github.com/monkeydioude/drannoc/internal/bucket"
-	"github.com/monkeydioude/drannoc/internal/misc"
+	repo "github.com/monkeydioude/drannoc/internal/repository"
 
 	"github.com/monkeydioude/drannoc/internal/entity"
-	"github.com/monkeydioude/drannoc/internal/repository"
 )
 
 // UserCreate is the service handling user creation.
 // Creates a new user with encrypted password, stores the user
 // and the auth in different buckets.
-func UserCreate(loginData body.LoginData) (*entity.AuthToken, error) {
-	userEntity := entity.NewUser(loginData.Login)
-	userRepo := repository.NewUserRepository()
+func UserCreate(
+	loginData body.LoginData,
+	userRepo *repo.User,
+	tokenRepo *repo.AuthToken,
+) (*entity.AuthToken, error) {
 
-	res, err := userRepo.FindFirst(repository.Filter{"login": userEntity.Login})
+	if len(loginData.Login) == 0 || len(loginData.Password) == 0 {
+		return nil, errors.New("a login and a password must be given")
+	}
+
+	// attempting to create a token
+	token, err := CreateAuthTokenNow(tokenRepo)
 	if err != nil {
 		return nil, err
 	}
+
+	user, err := entity.NewUser(loginData.Login, loginData.Password)
+	// could not verify user
+	if err != nil {
+		return nil, err
+	}
+	// loading user to check if existing
+	res, err := userRepo.Load(user)
+
+	// sum' happened
+	if err != nil {
+		tokenRepo.Delete(token)
+		return nil, err
+	}
+	// user exists
 	if res != nil {
-		return nil, errors.New("Login already exists in user")
+		tokenRepo.Delete(token)
+		return nil, errors.New("login already exists")
 	}
 
-	auth, err := AuthCreate(userEntity.ID, loginData.Password)
+	_, err = userRepo.Create(user)
+	// storing the user in collection
 	if err != nil {
-		return nil, err
-	}
-
-	token, err := AuthTokenCreate(auth.GetPassword(), time.Now(), misc.TokenDuration)
-	if err != nil {
-		repository.NewAuthRepository().Delete(auth)
-		return nil, err
-	}
-
-	_, err = userRepo.Store(userEntity)
-	if err != nil {
-		repository.NewAuthRepository().Delete(auth)
-		bucket.AuthToken(nil).Delete(token.GetToken())
+		tokenRepo.Delete(token)
 		return nil, err
 	}
 	return token, nil

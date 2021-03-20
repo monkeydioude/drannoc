@@ -5,20 +5,20 @@ import (
 	"time"
 
 	"github.com/monkeydioude/drannoc/internal/db"
-	entityInt "github.com/monkeydioude/drannoc/internal/entity"
-	"github.com/monkeydioude/drannoc/pkg/entity"
+	"github.com/monkeydioude/drannoc/internal/entity"
+	iEntity "github.com/monkeydioude/drannoc/pkg/entity"
 )
 
-// UserRepository would be the implementation of the Repository interface
+// User would be the implementation of the Repository interface
 // for the User Collection
-type UserRepository struct {
+type User struct {
 	BaseRepo
 }
 
-// NewUserRepository returns a pointer to a UserRepository instance
-func NewUserRepository() *UserRepository {
+// NewUser returns a pointer to a User instance
+func NewUser() *User {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	return &UserRepository{
+	return &User{
 		BaseRepo: BaseRepo{
 			context:    ctx,
 			cancelFunc: cancel,
@@ -28,8 +28,13 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-// FindFirst calls the BaseRepo's FindFirst, adding the kind of entity
-// it awaits.
-func (repo *UserRepository) FindFirst(filter Filter) (entity.Entity, error) {
-	return repo.BaseRepo.FindFirst(&entityInt.User{}, filter)
+// Load the document from the DB
+func (repo *User) Load(user *entity.User) (iEntity.Entity, error) {
+	return repo.FindFirst(user, Filter{"login": user.Login, "password": user.Password})
+}
+
+// Create is like store but do some setup before
+func (repo *User) Create(user *entity.User) (string, error) {
+	user.Created = time.Now().Unix()
+	return repo.Store(user)
 }

@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/monkeydioude/drannoc/internal/bucket"
 	"github.com/monkeydioude/drannoc/internal/encrypt"
 )
 
@@ -22,22 +21,27 @@ type AuthToken struct {
 	Created  int64 `json:"created"`
 	Expires  int64 `json:"expires"`
 	LastUsed int64 `json:"lastUsed"`
-	token    string
+	Duration int   `json:"duration"`
+	// ID can change but Token can persist
+	// through time. For example if
+	// a token is renewed
+	Token string `json:"token"`
+	ID    string `json:"id"`
 }
 
 // GetID the bolt.Entity interface
 func (a *AuthToken) GetID() string {
-	return a.token
+	return a.ID
 }
 
 // SetID the bolt.Entity interface
-func (a *AuthToken) SetID(token string) {
-	a.token = token
+func (a *AuthToken) SetID(ID string) {
+	a.ID = ID
 }
 
 // GetToken just gets the token aka the key
 func (a *AuthToken) GetToken() string {
-	return a.GetID()
+	return a.Token
 }
 
 // String implements the Stringer interface
@@ -82,24 +86,9 @@ func (a *AuthToken) ShouldRemakeNow() bool {
 	return a.ShouldRemake(time.Now())
 }
 
-// LoadAuthToken retrieve
-func LoadAuthToken(tokenID string) (*AuthToken, error) {
-	bucket := bucket.AuthToken(nil)
-
-	data, err := bucket.Get(tokenID)
-	if err != nil {
-		return nil, err
-	}
-
-	authToken := &AuthToken{
-		token: tokenID,
-	}
-	return authToken, json.Unmarshal(data, authToken)
-}
-
-// NewAuthToken generates a new Authentification token along
+// GenerateAuthToken generates a new Authentification token along
 // with its time related data
-func NewAuthToken(passwd string, start time.Time, duration time.Duration) *AuthToken {
+func GenerateAuthToken(start time.Time, duration time.Duration) *AuthToken {
 	const len int = 12
 	var buffer bytes.Buffer
 	created := start.Unix()
@@ -110,11 +99,11 @@ func NewAuthToken(passwd string, start time.Time, duration time.Duration) *AuthT
 		buffer.WriteByte(byte(rand.Intn(50)))
 	}
 
-	buffer.WriteString(passwd)
 	return &AuthToken{
 		Created:  created,
 		Expires:  expires,
 		LastUsed: lastUsed,
-		token:    encrypt.MD5FromBytes(buffer.Bytes()),
+		Duration: int(duration.Seconds()),
+		Token:    encrypt.MD5(buffer.Bytes()),
 	}
 }

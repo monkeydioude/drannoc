@@ -3,13 +3,18 @@ package service
 import (
 	"time"
 
-	"github.com/monkeydioude/drannoc/internal/bucket"
 	"github.com/monkeydioude/drannoc/internal/entity"
+	"github.com/monkeydioude/drannoc/internal/misc"
+	repo "github.com/monkeydioude/drannoc/internal/repository"
 )
 
-// AuthTokenCreate is the auth token creation routine
-func AuthTokenCreate(password string, start time.Time, duration time.Duration) (*entity.AuthToken, error) {
-	token := entity.NewAuthToken(password, start, duration)
-	_, err := bucket.AuthToken(nil).Store(token)
+// CreateAuthTokenNow is the auth token creation routine
+func CreateAuthTokenNow(
+	tokenRepo *repo.AuthToken,
+) (*entity.AuthToken, error) {
+	start := time.Now()
+	duration := misc.TokenDuration
+	token := entity.GenerateAuthToken(start, duration)
+	_, err := tokenRepo.Store(token)
 	return token, err
 }

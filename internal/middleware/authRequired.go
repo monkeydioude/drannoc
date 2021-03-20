@@ -1,24 +1,27 @@
 package middleware
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
+	"github.com/monkeydioude/drannoc/internal/config"
 	"github.com/monkeydioude/drannoc/internal/entity"
+	"github.com/monkeydioude/drannoc/internal/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 
 // AuthRequired is a middleware for checking
 // token authentifier presence and availability
 func AuthRequired(c *gin.Context) {
-	tokenID := c.GetHeader("auth-token")
-
+	tokenID := c.GetHeader(config.AuthTokenLabel)
 	if tokenID == "" {
-		res.Write(c, res.Redirect("/login"))
+		res.Write(c, res.Redirect(config.UserLoginRoute))
 		return
 	}
-	token, err := entity.LoadAuthToken(tokenID)
-	fmt.Println(token.GetToken())
+
+	token := &entity.AuthToken{
+		Token: tokenID,
+	}
+
+	_, err := repository.NewAuthToken().Load(token)
 
 	if err != nil {
 		res.Write(c, res.BadRequest(err.Error()))
@@ -26,7 +29,8 @@ func AuthRequired(c *gin.Context) {
 	}
 
 	if token == nil || token.GetToken() != tokenID || !token.IsValidNow() {
-		res.Write(c, res.Redirect("/login"))
+		c.SetCookie(config.AuthTokenLabel, "", 0, "/", "", false, false)
+		res.Write(c, res.Redirect(config.UserLoginRoute))
 		return
 	}
 }

@@ -8,8 +8,8 @@ import (
 
 // LoginData struct embodies data received from gin.Context.Request.Body
 type LoginData struct {
-	Login    string `json:"l"`
-	Password string `json:"p"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 // IsValid verifies that LoginData were parsed and set correctly
