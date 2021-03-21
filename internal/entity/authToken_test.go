@@ -48,26 +48,39 @@ func TestICanVerifyTokenExpired(t *testing.T) {
 	}
 }
 
-func TestIShouldRemakeToken(t *testing.T) {
-	token := &AuthToken{
-		Created:  0,
-		Expires:  10,
-		LastUsed: 0,
-		Token:    "c",
-	}
-	if !token.ShouldRemake(time.Unix(9, 0)) {
-		t.Fail()
-	}
-}
-
 func TestIShouldNotRemakeToken(t *testing.T) {
 	token := &AuthToken{
 		Created:  0,
 		Expires:  10,
 		LastUsed: 0,
 		Token:    "d",
+		Life:     1,
 	}
 	if token.ShouldRemake(time.Unix(15, 0)) {
+		t.Fail()
+	}
+	if token.ShouldRemake(time.Unix(5, 0)) {
+		t.Fail()
+	}
+}
+
+func TestIShouldRemakeToken(t *testing.T) {
+	token := &AuthToken{
+		Created:  0,
+		Expires:  10,
+		LastUsed: 0,
+		Token:    "d",
+		Life:     1,
+	}
+
+	// inside remake threshold
+	if !token.ShouldRemake(time.Unix(9, 0)) {
+		t.Fail()
+	}
+
+	token.Life = 0
+	// no more life but validity is still ok
+	if !token.ShouldRemake(time.Unix(5, 0)) {
 		t.Fail()
 	}
 }

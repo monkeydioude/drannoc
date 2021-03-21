@@ -42,3 +42,29 @@ func RevokeAuthToken(tokenRepo *repo.AuthToken, token string) error {
 
 	return nil
 }
+
+// TryRefreshToken try to generate a new token
+func TryRefreshToken(
+	tokenRepo *repo.AuthToken,
+	token *entity.AuthToken,
+) error {
+	if !token.ShouldRemakeNow() {
+		return nil
+	}
+
+	repo := repo.NewAuthToken()
+	token, err := CreateAuthTokenNow(
+		repo,
+		token.Consumer,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = repo.Store(token)
+	if err != nil {
+		return err
+	}
+	return nil
+}

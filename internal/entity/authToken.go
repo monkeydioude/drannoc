@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/monkeydioude/drannoc/internal/config"
 	"github.com/monkeydioude/drannoc/internal/encrypt"
 )
 
@@ -28,6 +29,7 @@ type AuthToken struct {
 	Token    string `json:"token"`
 	ID       string `json:"id"`
 	Consumer string `json:"consumer"`
+	Life     int    `json:"life"`
 }
 
 // GetID the bolt.Entity interface
@@ -70,6 +72,16 @@ func (a *AuthToken) IsValidNow() bool {
 	return a.IsValid(time.Now())
 }
 
+// Tick remove 1 life from the total count
+func (a *AuthToken) Tick() int {
+	a.Life -= 1
+	return a.Life
+}
+
+func (a *AuthToken) HasLife() bool {
+	return a.Life > 0
+}
+
 // ShouldRemake verifies if the token shouldnt be re-generated
 // before expiration. Expires * tokenRemakeThreshold < remake < Expires
 func (a *AuthToken) ShouldRemake(date time.Time) bool {
@@ -79,7 +91,11 @@ func (a *AuthToken) ShouldRemake(date time.Time) bool {
 
 	t := int64(float64(time.Unix(a.Expires, 0).Unix()) * tokenRemakeThreshold)
 
-	return date.After(time.Unix(t, 0))
+	if date.After(time.Unix(t, 0)) && a.HasLife() {
+		return true
+	}
+
+	return !a.HasLife()
 }
 
 // ShouldRemakeNow is the same as ShouldRemake, but now
@@ -111,5 +127,6 @@ func GenerateAuthToken(
 		Duration: int(duration.Seconds()),
 		Token:    encrypt.MD5(buffer.Bytes()),
 		Consumer: consumer,
+		Life:     config.TokenLivesMaxAmount,
 	}
 }

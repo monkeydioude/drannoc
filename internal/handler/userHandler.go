@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/monkeydioude/drannoc/internal/body"
 	"github.com/monkeydioude/drannoc/internal/config"
@@ -68,9 +70,10 @@ func UserLogin(c *gin.Context) {
 		res.Write(c, res.ServiceUnavailable("could not create token", err.Error()))
 		return
 	}
+	maxAge := int(token.Expires - time.Now().Unix())
 	// setting up the AuthToken Cookie
-	c.SetCookie(config.AuthTokenLabel, token.GetToken(), token.Duration, "/", "", false, false)
-	c.SetCookie(config.ConsumerLabel, user.ID, token.Duration, "/", "", false, false)
+	c.SetCookie(config.AuthTokenLabel, token.GetToken(), maxAge, "/", "", false, false)
+	c.SetCookie(config.ConsumerLabel, user.ID, maxAge, "/", "", false, false)
 
 	res.Ok(c, gin.H{
 		"data": token,
