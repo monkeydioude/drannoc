@@ -29,7 +29,7 @@ func AuthRequired(c *gin.Context) {
 	}
 
 	if token == nil || token.GetToken() != tokenID || !token.IsValidNow() {
-		c.SetCookie(config.AuthTokenLabel, "", 0, "/", "", false, false)
+		c.SetCookie(config.AuthTokenLabel, "", -1, "/", "", false, false)
 		res.Write(c, res.Redirect(config.UserLoginRoute))
 		return
 	}

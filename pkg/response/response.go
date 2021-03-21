@@ -87,6 +87,12 @@ func BadRequest(msg string) *Response {
 	return NewWithError(400, msg, msg)
 }
 
+// BadRequest = 400 response code
+func Unauthorized(msg string) *Response {
+	log.Error(msg)
+	return NewWithError(401, "unauthorized", msg)
+}
+
 // ServiceUnavailable = 503 response code
 func ServiceUnavailable(msg, err string) *Response {
 	log.Error(err)

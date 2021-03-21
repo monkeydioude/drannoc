@@ -25,8 +25,9 @@ type AuthToken struct {
 	// ID can change but Token can persist
 	// through time. For example if
 	// a token is renewed
-	Token string `json:"token"`
-	ID    string `json:"id"`
+	Token    string `json:"token"`
+	ID       string `json:"id"`
+	Consumer string `json:"consumer"`
 }
 
 // GetID the bolt.Entity interface
@@ -88,7 +89,11 @@ func (a *AuthToken) ShouldRemakeNow() bool {
 
 // GenerateAuthToken generates a new Authentification token along
 // with its time related data
-func GenerateAuthToken(start time.Time, duration time.Duration) *AuthToken {
+func GenerateAuthToken(
+	start time.Time,
+	duration time.Duration,
+	consumer string,
+) *AuthToken {
 	const len int = 12
 	var buffer bytes.Buffer
 	created := start.Unix()
@@ -105,5 +110,6 @@ func GenerateAuthToken(start time.Time, duration time.Duration) *AuthToken {
 		LastUsed: lastUsed,
 		Duration: int(duration.Seconds()),
 		Token:    encrypt.MD5(buffer.Bytes()),
+		Consumer: consumer,
 	}
 }

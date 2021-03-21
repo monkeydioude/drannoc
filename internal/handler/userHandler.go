@@ -6,7 +6,7 @@ import (
 	"github.com/monkeydioude/drannoc/internal/config"
 	"github.com/monkeydioude/drannoc/internal/entity"
 	repo "github.com/monkeydioude/drannoc/internal/repository"
-	"github.com/monkeydioude/drannoc/internal/service"
+	service "github.com/monkeydioude/drannoc/internal/routine"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 
@@ -62,7 +62,7 @@ func UserLogin(c *gin.Context) {
 	}
 
 	// create a new auth token on login
-	token, err := service.CreateAuthTokenNow(repo.NewAuthToken())
+	token, err := service.CreateAuthTokenNow(repo.NewAuthToken(), user.ID)
 
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("could not create token", err.Error()))
@@ -70,8 +70,14 @@ func UserLogin(c *gin.Context) {
 	}
 	// setting up the AuthToken Cookie
 	c.SetCookie(config.AuthTokenLabel, token.GetToken(), token.Duration, "/", "", false, false)
+	c.SetCookie(config.ConsumerLabel, user.ID, token.Duration, "/", "", false, false)
 
 	res.Ok(c, gin.H{
 		"data": token,
 	})
+}
+
+// UserIndex retrieves user related data
+// GET /user
+func UserIndex(c *gin.Context) {
 }
