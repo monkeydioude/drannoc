@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Filter is as shortcut to map[string]interface{} (aka json)
@@ -68,7 +69,7 @@ func (repo BaseRepo) FindFirstByID(entity entity.Entity, id string) (entity.Enti
 // then store it into DB
 func (repo BaseRepo) Store(entity entity.Entity) (string, error) {
 	entity.SetID(uuid.New().String())
-	_, err := repo.collection.InsertOne(repo.GetContext(), entity)
+	_, err := repo.GetCollection().InsertOne(repo.GetContext(), entity)
 
 	if err != nil {
 		return "", err
@@ -79,6 +80,18 @@ func (repo BaseRepo) Store(entity entity.Entity) (string, error) {
 
 // Delete deletes multipe elements matching the document ID
 func (repo BaseRepo) Delete(entity entity.Entity) error {
-	_, err := repo.collection.DeleteMany(repo.context, Filter{"id": entity.GetID()})
+	_, err := repo.GetCollection().DeleteMany(repo.context, Filter{"id": entity.GetID()})
+	return err
+}
+
+func (repo BaseRepo) Save(e entity.Entity) error {
+	upsert := true
+	options := &options.UpdateOptions{
+		Upsert: &upsert,
+	}
+	update := map[string]entity.Entity{
+		"$set": e,
+	}
+	_, err := repo.GetCollection().UpdateOne(repo.context, Filter{"id": e.GetID()}, update, options)
 	return err
 }

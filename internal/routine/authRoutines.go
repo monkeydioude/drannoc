@@ -11,11 +11,11 @@ import (
 // CreateAuthTokenNow is the auth token creation routine
 func CreateAuthTokenNow(
 	tokenRepo *repo.AuthToken,
-	consumerID string,
+	consumer string,
 ) (*entity.AuthToken, error) {
 	start := time.Now()
 	duration := misc.TokenDuration
-	token := entity.GenerateAuthToken(start, duration, consumerID)
+	token := entity.GenerateAuthToken(start, duration, consumer)
 	_, err := tokenRepo.Store(token)
 	return token, err
 }
@@ -43,28 +43,26 @@ func RevokeAuthToken(tokenRepo *repo.AuthToken, token string) error {
 	return nil
 }
 
-// TryRefreshToken try to generate a new token
-func TryRefreshToken(
+// TryRegenerateToken try to generate a new token. First check
+// if we should regenerate a new
+func TryRegenerateToken(
 	tokenRepo *repo.AuthToken,
 	token *entity.AuthToken,
-) error {
+) (bool, error) {
 	if !token.ShouldRemakeNow() {
-		return nil
+		return false, nil
 	}
 
 	repo := repo.NewAuthToken()
-	token, err := CreateAuthTokenNow(
+	t, err := CreateAuthTokenNow(
 		repo,
 		token.Consumer,
 	)
+	*token = *t
 
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	_, err = repo.Store(token)
-	if err != nil {
-		return err
-	}
-	return nil
+	return true, nil
 }

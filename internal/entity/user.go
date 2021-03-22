@@ -40,10 +40,10 @@ func (u *User) SetID(id string) {
 
 // NewUser creates a pointer to a new User instance
 func NewUser(login, password string) (*User, error) {
-	h, err := encrypt.SCrypt(password)
-	if err != nil {
-		return nil, err
-	}
+	h := encrypt.MD5FromString(password)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	return &User{
 		Login:    login,
 		Password: h,

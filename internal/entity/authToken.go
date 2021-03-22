@@ -89,7 +89,7 @@ func (a *AuthToken) ShouldRemake(date time.Time) bool {
 		return false
 	}
 
-	t := int64(float64(time.Unix(a.Expires, 0).Unix()) * tokenRemakeThreshold)
+	t := a.Created + int64(float64(a.Expires-a.Created)*tokenRemakeThreshold)
 
 	if date.After(time.Unix(t, 0)) && a.HasLife() {
 		return true
