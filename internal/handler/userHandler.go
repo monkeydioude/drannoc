@@ -55,11 +55,16 @@ func UserLogin(c *gin.Context) {
 		res.Write(c, res.ServiceUnavailable("could not generate new user", err.Error()))
 		return
 	}
-	_, err = repo.NewUser().Load(user)
+	exist, err := repo.NewUser().Load(user)
 
-	// user does not exist
+	// error retrieving
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("could not retrieve user", err.Error()))
+		return
+	}
+
+	if exist == nil {
+		res.Write(c, res.BadRequest("user does not exist"))
 		return
 	}
 
