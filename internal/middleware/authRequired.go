@@ -7,7 +7,7 @@ import (
 	"github.com/monkeydioude/drannoc/internal/config"
 	"github.com/monkeydioude/drannoc/internal/entity"
 	"github.com/monkeydioude/drannoc/internal/repository"
-	"github.com/monkeydioude/drannoc/internal/routine"
+	routine "github.com/monkeydioude/drannoc/internal/service"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 

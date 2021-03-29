@@ -1,9 +1,9 @@
-package routine
+package service
 
 import (
 	"errors"
+	"io"
 
-	"github.com/monkeydioude/drannoc/internal/body"
 	repo "github.com/monkeydioude/drannoc/internal/repository"
 
 	"github.com/monkeydioude/drannoc/internal/entity"
@@ -13,19 +13,17 @@ import (
 // Creates a new user with encrypted password, stores the user
 // and the auth in different buckets.
 func UserCreate(
-	loginData body.LoginData,
+	body io.ReadCloser,
 	userRepo *repo.User,
 	tokenRepo *repo.AuthToken,
 ) (*entity.AuthToken, error) {
+	user := &entity.User{}
+	err := EntityFromRequestBody(body, user)
 
-	if len(loginData.Login) == 0 || len(loginData.Password) == 0 {
-		return nil, errors.New("a login and a password must be given")
-	}
-	user, err := entity.NewUser(loginData.Login, loginData.Password)
-	// could not verify user
 	if err != nil {
 		return nil, err
 	}
+	user.PasswordEncrypt()
 
 	// attempting to create a token
 	token, err := CreateAuthTokenNow(tokenRepo, user.ID)

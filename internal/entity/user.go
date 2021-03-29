@@ -14,7 +14,7 @@ type User struct {
 	Created  int64  `json:"created"`
 	Password string `json:"password"`
 	// AuthID string `json:"authID"`
-	// Email  string `json:"email"`
+	Email string `json:"email"`
 }
 
 // GetID the bolt.Entity interface
@@ -36,6 +36,11 @@ func (u *User) String() string {
 // SetID implements the Stringer interface
 func (u *User) SetID(id string) {
 	u.ID = id
+}
+
+// SetID implements the Stringer interface
+func (u *User) PasswordEncrypt() {
+	u.Password = encrypt.MD5FromString(u.Password)
 }
 
 // NewUser creates a pointer to a new User instance

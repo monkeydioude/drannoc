@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/monkeydioude/drannoc/internal/config"
 	"github.com/monkeydioude/drannoc/internal/repository"
-	"github.com/monkeydioude/drannoc/internal/routine"
+	"github.com/monkeydioude/drannoc/internal/service"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 
@@ -15,7 +15,7 @@ func AuthDelete(c *gin.Context) {
 
 	// revoking token if exist in header
 	if token != "" {
-		routine.RevokeAuthToken(repository.NewAuthToken(), token)
+		service.RevokeAuthToken(repository.NewAuthToken(), token)
 	}
 
 	// unsetting cookies, since user asked for logout

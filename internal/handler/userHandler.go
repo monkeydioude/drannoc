@@ -4,25 +4,18 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/body"
 	"github.com/monkeydioude/drannoc/internal/config"
 	"github.com/monkeydioude/drannoc/internal/entity"
 	repo "github.com/monkeydioude/drannoc/internal/repository"
-	service "github.com/monkeydioude/drannoc/internal/routine"
+	"github.com/monkeydioude/drannoc/internal/service"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 
 // UserCreate handles user creation form
 // POST /user
 func UserCreate(c *gin.Context) {
-	loginData, err := body.NewLoginData(c.Request.Body)
-	if err != nil {
-		res.Write(c, res.BadRequest(err.Error()))
-		return
-	}
-
 	token, err := service.UserCreate(
-		loginData,
+		c.Request.Body,
 		repo.NewUser(),
 		repo.NewAuthToken(),
 	)
@@ -43,18 +36,14 @@ func UserCreate(c *gin.Context) {
 // UserLogin handles user login form
 // POST /user/login
 func UserLogin(c *gin.Context) {
-	loginData, err := body.NewLoginData(c.Request.Body)
-	if err != nil {
-		res.Write(c, res.BadRequest(err.Error()))
-		return
-	}
-
-	user, err := entity.NewUser(loginData.Login, loginData.Password)
-	// could not generate new user
+	user := &entity.User{}
+	err := service.EntityFromRequestBody(c.Request.Body, user)
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("could not generate new user", err.Error()))
 		return
 	}
+	user.PasswordEncrypt()
+
 	exist, err := repo.NewUser().Load(user)
 
 	// error retrieving
