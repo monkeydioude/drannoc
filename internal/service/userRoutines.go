@@ -32,7 +32,7 @@ func UserCreate(
 	}
 
 	// loading user to check if existing
-	res, err := userRepo.Load(user)
+	res, err := userRepo.LoadFromCredentials(user)
 
 	// sum' happened
 	if err != nil {

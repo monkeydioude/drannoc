@@ -44,7 +44,7 @@ func UserLogin(c *gin.Context) {
 	}
 	user.PasswordEncrypt()
 
-	exist, err := repo.NewUser().Load(user)
+	exist, err := repo.NewUser().LoadFromCredentials(user)
 
 	// error retrieving
 	if err != nil {
@@ -77,4 +77,30 @@ func UserLogin(c *gin.Context) {
 // UserIndex retrieves user related data
 // GET /user
 func UserIndex(c *gin.Context) {
+	userID, err := c.Cookie("consumer")
+
+	if err != nil {
+		res.Write(c, res.ServiceUnavailable("could not find userID", err.Error()))
+		return
+	}
+
+	user, err := repo.UserID(userID).Load()
+	if err != nil {
+		res.Write(c, res.ServiceUnavailable(err.Error(), err.Error()))
+		return
+	}
+
+	res.Ok(c, gin.H{
+		"data": struct {
+			ID      string `json:"id"`
+			Email   string `json:"email"`
+			Login   string `json:"login"`
+			Created int64  `json:"created"`
+		}{
+			ID:      user.ID,
+			Email:   user.Email,
+			Login:   user.Login,
+			Created: user.Created,
+		},
+	})
 }

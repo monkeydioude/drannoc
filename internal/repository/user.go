@@ -9,6 +9,20 @@ import (
 	iEntity "github.com/monkeydioude/drannoc/pkg/entity"
 )
 
+// UserID type
+type UserID string
+
+// Load retrieve a User document using only its ID
+func (ID UserID) Load() (*entity.User, error) {
+	repo := NewUser()
+	user := &entity.User{
+		ID: string(ID),
+	}
+	_, err := repo.Load(user)
+
+	return user, err
+}
+
 // User would be the implementation of the Repository interface
 // for the User Collection
 type User struct {
@@ -30,6 +44,11 @@ func NewUser() *User {
 
 // Load the document from the DB
 func (repo *User) Load(user *entity.User) (iEntity.Entity, error) {
+	return repo.FindFirst(user, Filter{"id": user.ID})
+}
+
+// Load the document from the DB
+func (repo *User) LoadFromCredentials(user *entity.User) (iEntity.Entity, error) {
 	return repo.FindFirst(user, Filter{"login": user.Login, "password": user.Password})
 }
 
