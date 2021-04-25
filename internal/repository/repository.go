@@ -12,6 +12,23 @@ import (
 // Filter is as shortcut to map[string]interface{} (aka json)
 type Filter map[string]interface{}
 
+func (f Filter) Add(k string, v interface{}) {
+	f[k] = v
+}
+
+func (f Filter) AddFilter(k, fk string, v interface{}) {
+	filter := Filter{}
+
+	if _, ok := f[k]; ok {
+		switch f[k].(type) {
+		case Filter:
+			filter = f[k].(Filter)
+		}
+	}
+	filter[fk] = v
+	f.Add(k, filter)
+}
+
 // Repository is the base interface for DB requesting
 type Repository interface {
 	GetCollection() *mongo.Collection
@@ -94,4 +111,40 @@ func (repo BaseRepo) Save(e entity.Entity) error {
 	}
 	_, err := repo.GetCollection().UpdateOne(repo.context, Filter{"id": e.GetID()}, update, options)
 	return err
+}
+
+func (repo BaseRepo) Find(
+	ent entity.Entity,
+	filters Filter,
+	options *options.FindOptions,
+	arrBuilder func(len int) []entity.Entity,
+) ([]entity.Entity, error) {
+	cursor, err := repo.GetCollection().Find(
+		repo.GetContext(),
+		filters,
+		options,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := cursor.Current.Elements()
+
+	if err != nil {
+		return nil, err
+	}
+
+	data := arrBuilder(len(raw))
+
+	for cursor.Next(repo.GetContext()) {
+		err = cursor.Decode(&ent)
+		data = append(data, ent)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }

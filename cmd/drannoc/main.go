@@ -40,6 +40,7 @@ func main() {
 	// User creation
 	r.POST("/user", handler.UserCreate)
 	r.POST(config.UserLoginRoute, handler.UserLogin)
+	r.GET("/coins", handler.CoinsGet)
 
 	authorized := r.Group("/")
 	authorized.Use(middleware.AuthRequired)
