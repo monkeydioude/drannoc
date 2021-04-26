@@ -18,7 +18,7 @@ func AuthRequired(c *gin.Context) {
 	tokenID := c.GetHeader(config.AuthTokenLabel)
 	if tokenID == "" {
 		c.Abort()
-		res.Write(c, res.Redirect(config.UserLoginRoute))
+		res.Write(c, res.Unauthorized(config.UserLoginRoute))
 		return
 	}
 
@@ -38,7 +38,7 @@ func AuthRequired(c *gin.Context) {
 	// check token validity
 	if token == nil || token.GetToken() != tokenID || !token.IsValidNow() {
 		c.SetCookie(config.AuthTokenLabel, "", -1, "/", "", false, false)
-		res.Write(c, res.Redirect(config.UserLoginRoute))
+		res.Write(c, res.Unauthorized(config.UserLoginRoute))
 		c.Abort()
 		return
 	}
