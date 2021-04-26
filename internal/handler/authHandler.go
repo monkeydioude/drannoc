@@ -9,7 +9,7 @@ import (
 )
 
 // UserLogout handles user loging out
-// Delete /auth
+// DELETE /auth
 func AuthDelete(c *gin.Context) {
 	token := c.GetHeader(config.AuthTokenLabel)
 
