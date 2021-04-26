@@ -18,11 +18,17 @@ func coinsFiltersProjects(
 	coins string, filters,
 	projections repository.Filter,
 ) (repository.Filter, repository.Filter) {
+	or := []repository.Filter{}
+
 	for _, v := range strings.Split(coins, ",") {
 		key := "coins." + v
-		filters.AddFilter(key, "$exists", true)
+		f := repository.Filter{}
+		f.AddFilter(key, "$exists", true)
+		or = append(or, f)
 		projections.Add(key, 1)
 	}
+
+	filters["$or"] = or
 
 	return filters, projections
 }
