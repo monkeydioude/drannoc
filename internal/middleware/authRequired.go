@@ -17,6 +17,7 @@ func AuthRequired(c *gin.Context) {
 	// fetching token from Header
 	tokenID := c.GetHeader(config.AuthTokenLabel)
 	if tokenID == "" {
+		c.Abort()
 		res.Write(c, res.Redirect(config.UserLoginRoute))
 		return
 	}
@@ -29,6 +30,7 @@ func AuthRequired(c *gin.Context) {
 	// loading token from DB
 	_, err := tokenRepo.Load(token)
 	if err != nil {
+		c.Abort()
 		res.Write(c, res.BadRequest(err.Error()))
 		return
 	}
@@ -37,6 +39,7 @@ func AuthRequired(c *gin.Context) {
 	if token == nil || token.GetToken() != tokenID || !token.IsValidNow() {
 		c.SetCookie(config.AuthTokenLabel, "", -1, "/", "", false, false)
 		res.Write(c, res.Redirect(config.UserLoginRoute))
+		c.Abort()
 		return
 	}
 
@@ -48,6 +51,7 @@ func AuthRequired(c *gin.Context) {
 
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("auth-token refresh issue", err.Error()))
+		c.Abort()
 		return
 	}
 
@@ -61,7 +65,7 @@ func AuthRequired(c *gin.Context) {
 		return
 	}
 
-	// not regenerated, token tick once, applying tick altearations
+	// not regenerated, token tick once, applying tick alterations
 	// (removing a life of the token, for example)
 	token.Tick()
 
@@ -69,6 +73,7 @@ func AuthRequired(c *gin.Context) {
 	err = tokenRepo.Save(token)
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("auth-token refresh issue", err.Error()))
+		c.Abort()
 		return
 	}
 }
