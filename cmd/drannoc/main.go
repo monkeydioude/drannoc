@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/config"
-	"github.com/monkeydioude/drannoc/internal/db"
-	"github.com/monkeydioude/drannoc/internal/handler"
-	"github.com/monkeydioude/drannoc/internal/middleware"
+	"github.com/monkeydioude/drannoc/internal/pkg/config"
+	"github.com/monkeydioude/drannoc/internal/pkg/db"
+	"github.com/monkeydioude/drannoc/internal/pkg/handler"
+	"github.com/monkeydioude/drannoc/internal/pkg/middleware"
 )
 
 // CORSMiddleware handles CORS rights and OPTIONS requests

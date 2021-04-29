@@ -3,7 +3,7 @@ package entity
 import (
 	"encoding/json"
 
-	"github.com/monkeydioude/drannoc/internal/encrypt"
+	"github.com/monkeydioude/drannoc/internal/pkg/encrypt"
 	log "github.com/sirupsen/logrus"
 )
 

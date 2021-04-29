@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/monkeydioude/drannoc/internal/config"
-	"github.com/monkeydioude/drannoc/internal/encrypt"
+	"github.com/monkeydioude/drannoc/internal/pkg/config"
+	"github.com/monkeydioude/drannoc/internal/pkg/encrypt"
 )
 
 const tokenRemakeThreshold = 0.8

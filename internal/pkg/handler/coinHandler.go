@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/entity"
-	"github.com/monkeydioude/drannoc/internal/repository"
+	"github.com/monkeydioude/drannoc/internal/pkg/entity"
+	"github.com/monkeydioude/drannoc/internal/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

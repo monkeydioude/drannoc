@@ -4,10 +4,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/config"
-	"github.com/monkeydioude/drannoc/internal/entity"
-	"github.com/monkeydioude/drannoc/internal/repository"
-	routine "github.com/monkeydioude/drannoc/internal/service"
+	"github.com/monkeydioude/drannoc/internal/pkg/config"
+	"github.com/monkeydioude/drannoc/internal/pkg/entity"
+	"github.com/monkeydioude/drannoc/internal/pkg/repository"
+	routine "github.com/monkeydioude/drannoc/internal/pkg/service"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 )
 
