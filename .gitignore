@@ -1,4 +1,4 @@
 cmd/drannoc/drannoc
 **/*.bson
-db/
+./db/
 **/.env
