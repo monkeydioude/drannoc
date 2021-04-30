@@ -2,10 +2,10 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/pkg/config"
-	"github.com/monkeydioude/drannoc/internal/pkg/repository"
-	"github.com/monkeydioude/drannoc/internal/pkg/service"
+	"github.com/monkeydioude/drannoc/pkg/config"
+	"github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
+	"github.com/monkeydioude/drannoc/pkg/service"
 )
 
 // UserLogout handles user loging out

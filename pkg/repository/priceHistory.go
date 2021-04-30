@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/monkeydioude/drannoc/internal/pkg/db"
+	"github.com/monkeydioude/drannoc/pkg/db"
 )
 
 type PriceHistory struct {

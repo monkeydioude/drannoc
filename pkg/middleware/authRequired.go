@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/internal/pkg/config"
-	"github.com/monkeydioude/drannoc/internal/pkg/entity"
-	"github.com/monkeydioude/drannoc/internal/pkg/repository"
-	routine "github.com/monkeydioude/drannoc/internal/pkg/service"
+	"github.com/monkeydioude/drannoc/pkg/config"
+	"github.com/monkeydioude/drannoc/pkg/entity"
+	"github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
+	routine "github.com/monkeydioude/drannoc/pkg/service"
 )
 
 // AuthRequired is a middleware for checking

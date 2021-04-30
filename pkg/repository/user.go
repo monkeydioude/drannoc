@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/monkeydioude/drannoc/internal/pkg/db"
-	"github.com/monkeydioude/drannoc/internal/pkg/entity"
+	"github.com/monkeydioude/drannoc/pkg/db"
+	"github.com/monkeydioude/drannoc/pkg/entity"
 	iEntity "github.com/monkeydioude/drannoc/pkg/entity"
 )
 

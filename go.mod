@@ -8,5 +8,5 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	go.etcd.io/bbolt v1.3.5
 	go.mongodb.org/mongo-driver v1.4.4
-	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670 // indirect
+	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670
 )

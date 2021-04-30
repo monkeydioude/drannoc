@@ -3,9 +3,9 @@ package service
 import (
 	"time"
 
-	"github.com/monkeydioude/drannoc/internal/pkg/entity"
-	"github.com/monkeydioude/drannoc/internal/pkg/misc"
-	repo "github.com/monkeydioude/drannoc/internal/pkg/repository"
+	"github.com/monkeydioude/drannoc/pkg/entity"
+	"github.com/monkeydioude/drannoc/pkg/misc"
+	repo "github.com/monkeydioude/drannoc/pkg/repository"
 )
 
 // CreateAuthTokenNow is the auth token creation routine

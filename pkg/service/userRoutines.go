@@ -4,9 +4,9 @@ import (
 	"errors"
 	"io"
 
-	repo "github.com/monkeydioude/drannoc/internal/pkg/repository"
+	repo "github.com/monkeydioude/drannoc/pkg/repository"
 
-	"github.com/monkeydioude/drannoc/internal/pkg/entity"
+	"github.com/monkeydioude/drannoc/pkg/entity"
 )
 
 // UserCreate is the service handling user creation.
