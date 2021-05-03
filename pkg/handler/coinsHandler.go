@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,29 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// CoinsGet retrieves coins rate history using filters.
+// coinsFiltersProjects generates Find Filters and Find Options
+// using a string list of coins
+func coinsFiltersProjects(
+	coins string,
+	filters,
+	projections repository.Filter,
+) (repository.Filter, repository.Filter) {
+	or := []repository.Filter{}
+
+	for _, v := range strings.Split(coins, ",") {
+		key := "coins." + v
+		f := repository.Filter{}
+		f.AddFilter(key, "$exists", true)
+		or = append(or, f)
+		projections.Add(key, 1)
+	}
+
+	filters["$or"] = or
+
+	return filters, projections
+}
+
+// GetCoins retrieves coins rate history using filters.
 // Filters:
 //	- order int
 // 	- duration int64
@@ -19,7 +42,7 @@ import (
 // 	- created_at map[string]int64 (using mongodb operators as keys)
 //
 // GET /coins
-func GetCoin(c *gin.Context) {
+func GetCoins(c *gin.Context) {
 	// order defined in with
 	order := -1
 	// milliseconds in db
@@ -43,11 +66,13 @@ func GetCoin(c *gin.Context) {
 		duration, _ = strconv.ParseInt(dur, 10, 64)
 	}
 
-	filters, options.Projection = coinsFiltersProjects(
-		c.Param("coin_id"),
-		filters,
-		options.Projection.(repository.Filter),
-	)
+	if coins, ok := c.GetQuery("coins"); ok && coins != "" {
+		filters, options.Projection = coinsFiltersProjects(
+			coins,
+			filters,
+			options.Projection.(repository.Filter),
+		)
+	}
 
 	if ca, ok := c.GetQueryMap("created_at"); ok {
 		for k, v := range ca {

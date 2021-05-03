@@ -40,11 +40,13 @@ func main() {
 	// User creation
 	r.POST("/user", handler.UserCreate)
 	r.POST(config.UserLoginRoute, handler.UserLogin)
+	r.GET("/coin/:coin_id", handler.GetCoin)
 
 	authorized := r.Group("/")
 	authorized.Use(middleware.AuthRequired)
 	{
-		authorized.GET("/coins", handler.CoinsGet)
+		// authorized.GET("/coin/:coin_id", handler.GetCoin)
+		authorized.GET("/coins", handler.GetCoins)
 		authorized.GET("/user", handler.UserIndex)
 		authorized.DELETE("/auth", handler.AuthDelete)
 	}
