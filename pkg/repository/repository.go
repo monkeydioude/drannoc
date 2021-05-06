@@ -117,7 +117,7 @@ func (repo BaseRepo) Find(
 	ent entity.Entity,
 	filters Filter,
 	options *options.FindOptions,
-	arrBuilder func(len int) []entity.Entity,
+	arr []entity.Entity,
 ) ([]entity.Entity, error) {
 	cursor, err := repo.GetCollection().Find(
 		repo.GetContext(),
@@ -129,22 +129,11 @@ func (repo BaseRepo) Find(
 		return nil, err
 	}
 
-	raw, err := cursor.Current.Elements()
+	cursor.All(repo.GetContext(), &arr)
 
 	if err != nil {
 		return nil, err
 	}
 
-	data := arrBuilder(len(raw))
-
-	for cursor.Next(repo.GetContext()) {
-		err = cursor.Decode(&ent)
-		data = append(data, ent)
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return arr, nil
 }

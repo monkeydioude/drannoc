@@ -44,6 +44,7 @@ func main() {
 	authorized := r.Group("/")
 	authorized.Use(middleware.AuthRequired)
 	{
+		authorized.GET("/coins/info", handler.CoinsInfo)
 		authorized.GET("/coin/:coin_id", handler.GetCoin)
 		authorized.GET("/coins", handler.GetCoins)
 		authorized.GET("/user", handler.UserIndex)
