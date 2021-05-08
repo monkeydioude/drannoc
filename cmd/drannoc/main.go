@@ -16,7 +16,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", config.OriginDomain)
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		// @todo dinamycally add allowed headers ?
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With, auth-token, consumer")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, Authorization, accept, origin, Cache-Control, X-Requested-With, auth-token, consumer")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
 
 		if c.Request.Method == "OPTIONS" {
@@ -30,9 +30,9 @@ func CORSMiddleware() gin.HandlerFunc {
 
 func main() {
 	r := gin.New()
+	r.Use(CORSMiddleware())
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(CORSMiddleware())
 
 	db.Start(config.MongoDBAddr)
 
