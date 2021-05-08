@@ -29,5 +29,5 @@ func NewAuthToken() *AuthToken {
 }
 
 func (repo *AuthToken) Load(token *entity.AuthToken) (iEntity.Entity, error) {
-	return repo.FindFirst(token, Filter{"token": token.Token})
+	return repo.FindFirst(token, db.Filter{"token": token.Token})
 }

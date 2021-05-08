@@ -3,6 +3,7 @@ package service
 import (
 	"time"
 
+	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"github.com/monkeydioude/drannoc/pkg/misc"
 	repo "github.com/monkeydioude/drannoc/pkg/repository"
@@ -28,7 +29,7 @@ func RevokeAuthToken(tokenRepo *repo.AuthToken, token string) error {
 	entity := &entity.AuthToken{
 		Token: token,
 	}
-	_, err := tokenRepo.FindFirst(entity, repo.Filter{"token": token})
+	_, err := tokenRepo.FindFirst(entity, db.Filter{"token": token})
 	if err != nil {
 		return err
 	}

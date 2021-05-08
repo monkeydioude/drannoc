@@ -44,12 +44,12 @@ func NewUser() *User {
 
 // Load the document from the DB
 func (repo *User) Load(user *entity.User) (iEntity.Entity, error) {
-	return repo.FindFirst(user, Filter{"id": user.ID})
+	return repo.FindFirst(user, db.Filter{"id": user.ID})
 }
 
 // Load the document from the DB
 func (repo *User) LoadFromCredentials(user *entity.User) (iEntity.Entity, error) {
-	return repo.FindFirst(user, Filter{"login": user.Login, "password": user.Password})
+	return repo.FindFirst(user, db.Filter{"login": user.Login, "password": user.Password})
 }
 
 // Create is like store but do some setup before

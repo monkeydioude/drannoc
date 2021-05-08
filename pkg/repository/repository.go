@@ -4,30 +4,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-// Filter is as shortcut to map[string]interface{} (aka json)
-type Filter map[string]interface{}
-
-func (f Filter) Add(k string, v interface{}) {
-	f[k] = v
-}
-
-func (f Filter) AddFilter(k, fk string, v interface{}) {
-	filter := Filter{}
-
-	if _, ok := f[k]; ok {
-		switch f[k].(type) {
-		case Filter:
-			filter = f[k].(Filter)
-		}
-	}
-	filter[fk] = v
-	f.Add(k, filter)
-}
 
 // Repository is the base interface for DB requesting
 type Repository interface {
@@ -66,7 +47,7 @@ func (repo BaseRepo) GetCollection() *mongo.Collection {
 }
 
 // FindFirst finds the first element using a filter
-func (repo BaseRepo) FindFirst(entity entity.Entity, filter Filter) (entity.Entity, error) {
+func (repo BaseRepo) FindFirst(entity entity.Entity, filter db.Filter) (entity.Entity, error) {
 	err := repo.GetCollection().FindOne(repo.GetContext(), filter).Decode(entity)
 
 	if entity.GetID() == "" {
@@ -78,7 +59,7 @@ func (repo BaseRepo) FindFirst(entity entity.Entity, filter Filter) (entity.Enti
 
 // FindFirstByID returns the first element using its ID
 func (repo BaseRepo) FindFirstByID(entity entity.Entity, id string) (entity.Entity, error) {
-	return repo.FindFirst(entity, Filter{"id": id})
+	return repo.FindFirst(entity, db.Filter{"id": id})
 }
 
 // Store implements Repository interface. Store creates
@@ -97,7 +78,7 @@ func (repo BaseRepo) Store(entity entity.Entity) (string, error) {
 
 // Delete deletes multipe elements matching the document ID
 func (repo BaseRepo) Delete(entity entity.Entity) error {
-	_, err := repo.GetCollection().DeleteMany(repo.context, Filter{"id": entity.GetID()})
+	_, err := repo.GetCollection().DeleteMany(repo.context, db.Filter{"id": entity.GetID()})
 	return err
 }
 
@@ -109,13 +90,13 @@ func (repo BaseRepo) Save(e entity.Entity) error {
 	update := map[string]entity.Entity{
 		"$set": e,
 	}
-	_, err := repo.GetCollection().UpdateOne(repo.context, Filter{"id": e.GetID()}, update, options)
+	_, err := repo.GetCollection().UpdateOne(repo.context, db.Filter{"id": e.GetID()}, update, options)
 	return err
 }
 
 func (repo BaseRepo) Find(
 	ent entity.Entity,
-	filters Filter,
+	filters db.Filter,
 	options *options.FindOptions,
 	arr []entity.Entity,
 ) ([]entity.Entity, error) {

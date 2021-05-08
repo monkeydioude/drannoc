@@ -30,7 +30,7 @@ func (repo *CoinInfo) LoadAll() ([]*entity.CoinInfo, error) {
 	arr := []*entity.CoinInfo{}
 	cursor, err := repo.GetCollection().Find(
 		repo.GetContext(),
-		Filter{},
+		db.Filter{},
 		nil,
 	)
 

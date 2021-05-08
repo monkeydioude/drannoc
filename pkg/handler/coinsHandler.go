@@ -6,24 +6,38 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	mongoOptions "go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func getCoins(c *gin.Context, proj interface{}) (db.Filter, interface{}) {
+	filters := db.Filter{}
+	if coins, ok := c.GetQuery("coins"); ok && coins != "" {
+		filters, proj = coinsFiltersProjects(
+			coins,
+			filters,
+			proj.(db.Filter),
+		)
+	}
+
+	return filters, proj
+}
 
 // coinsFiltersProjects generates Find Filters and Find Options
 // using a string list of coins
 func coinsFiltersProjects(
 	coins string,
 	filters,
-	projections repository.Filter,
-) (repository.Filter, repository.Filter) {
-	or := []repository.Filter{}
+	projections db.Filter,
+) (db.Filter, db.Filter) {
+	or := []db.Filter{}
 
 	for _, v := range strings.Split(coins, ",") {
 		key := "coins." + v
-		f := repository.Filter{}
+		f := db.Filter{}
 		f.AddFilter(key, "$exists", true)
 		or = append(or, f)
 		projections.Add(key, 1)
@@ -43,36 +57,17 @@ func coinsFiltersProjects(
 //
 // GET /coins
 func GetCoins(c *gin.Context) {
-	// order defined in with
-	order := -1
 	// milliseconds in db
 	created_at := time.Now().UnixNano() / 1000000
-	// filters used by mongodb.s Find
-	filters := repository.Filter{}
+
 	// options used by mongodb.s Find
-	options := &options.FindOptions{
-		Projection: repository.Filter{
-			"created_at": 1,
-		},
-	}
+	options := db.NewOptions().Proj("created_at", 1)
+	order := getOrder(c)
+	duration := getDuration((c))
 
-	var duration int64 = 3600000
-
-	if ord, ok := c.GetQuery("order"); ok {
-		order, _ = strconv.Atoi(ord)
-	}
-
-	if dur, ok := c.GetQuery("duration"); ok {
-		duration, _ = strconv.ParseInt(dur, 10, 64)
-	}
-
-	if coins, ok := c.GetQuery("coins"); ok && coins != "" {
-		filters, options.Projection = coinsFiltersProjects(
-			coins,
-			filters,
-			options.Projection.(repository.Filter),
-		)
-	}
+	// filters used by mongodb.s Find
+	filters, proj := getCoins(c, options.Projection)
+	options.Projection = proj
 
 	if ca, ok := c.GetQueryMap("created_at"); ok {
 		for k, v := range ca {
@@ -80,20 +75,20 @@ func GetCoins(c *gin.Context) {
 			filters.AddFilter("created_at", k, value)
 		}
 	} else {
-		filters.Add("created_at", repository.Filter{
+		filters.Add("created_at", db.Filter{
 			"$gte": created_at - duration,
 		})
 	}
 
 	repo := repository.NewPriceHistory()
 
-	options.Sort = repository.Filter{"created_at": order}
+	options.Sort = db.Filter{"created_at": order}
 
 	// triggers query to mongodb and retrieves a Cursor
 	cursor, err := repo.GetCollection().Find(
 		repo.GetContext(),
 		filters,
-		options,
+		(*mongoOptions.FindOptions)(options),
 	)
 
 	if err != nil {
@@ -120,6 +115,7 @@ func CoinsInfo(c *gin.Context) {
 		res.Write(c, res.ServiceUnavailable("could not retrieve coins info", err.Error()))
 		return
 	}
+
 	res.Ok(c, gin.H{
 		"data": coinInfos,
 	})

@@ -5,11 +5,49 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	mongoOptions "go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func getOrder(c *gin.Context) int {
+	order := -1
+	if ord, ok := c.GetQuery("order"); ok {
+		order, _ = strconv.Atoi(ord)
+	}
+
+	return order
+}
+
+func getDuration(c *gin.Context) int64 {
+	var duration int64 = 3600000
+
+	if dur, ok := c.GetQuery("duration"); ok {
+		duration, _ = strconv.ParseInt(dur, 10, 64)
+	}
+
+	return duration
+}
+
+func getCreatedAt(c *gin.Context, filters db.Filter, duration int64) db.Filter {
+	// milliseconds in db
+	created_at := time.Now().UnixNano() / 1000000
+
+	if ca, ok := c.GetQueryMap("created_at"); ok {
+		for k, v := range ca {
+			value, _ := strconv.ParseInt(v, 10, 64)
+			filters.AddFilter("created_at", k, value)
+		}
+	} else {
+		filters.Add("created_at", db.Filter{
+			"$gte": created_at - duration,
+		})
+	}
+
+	return filters
+}
 
 // CoinsGet retrieves coins rate history using filters.
 // Filters:
@@ -20,55 +58,28 @@ import (
 //
 // GET /coins
 func GetCoin(c *gin.Context) {
-	// order defined in with
-	order := -1
-	// milliseconds in db
-	created_at := time.Now().UnixNano() / 1000000
 	// filters used by mongodb.s Find
-	filters := repository.Filter{}
+	filters := db.Filter{}
 	// options used by mongodb.s Find
-	options := &options.FindOptions{
-		Projection: repository.Filter{
-			"created_at": 1,
-		},
-	}
-
-	var duration int64 = 3600000
-
-	if ord, ok := c.GetQuery("order"); ok {
-		order, _ = strconv.Atoi(ord)
-	}
-
-	if dur, ok := c.GetQuery("duration"); ok {
-		duration, _ = strconv.ParseInt(dur, 10, 64)
-	}
+	options := db.NewOptions().Proj("created_at", 1)
+	order := getOrder(c)
+	duration := getDuration((c))
 
 	filters, options.Projection = coinsFiltersProjects(
 		c.Param("coin_id"),
 		filters,
-		options.Projection.(repository.Filter),
+		options.Projection.(db.Filter),
 	)
-
-	if ca, ok := c.GetQueryMap("created_at"); ok {
-		for k, v := range ca {
-			value, _ := strconv.ParseInt(v, 10, 64)
-			filters.AddFilter("created_at", k, value)
-		}
-	} else {
-		filters.Add("created_at", repository.Filter{
-			"$gte": created_at - duration,
-		})
-	}
+	filters = getCreatedAt(c, filters, duration)
+	options.Sort = db.Filter{"created_at": order}
 
 	repo := repository.NewPriceHistory()
-
-	options.Sort = repository.Filter{"created_at": order}
 
 	// triggers query to mongodb and retrieves a Cursor
 	cursor, err := repo.GetCollection().Find(
 		repo.GetContext(),
 		filters,
-		options,
+		(*mongoOptions.FindOptions)(options),
 	)
 
 	if err != nil {
