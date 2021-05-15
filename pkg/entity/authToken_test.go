@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -11,13 +12,17 @@ func init() {
 	rand.Seed(3)
 }
 
-func TestICanGenerateAGenerateAuthToken(t *testing.T) {
+func TestICanGenerateAuthToken(t *testing.T) {
 	token := GenerateAuthToken(time.Unix(0, 0), 10*time.Second, "")
+	fmt.Println(token)
 	goal := &AuthToken{
 		Created:  0,
 		Expires:  10,
 		LastUsed: 0,
-		Token:    "24e1dc2fae12912da7a56a87edd1b447",
+		Duration: 10,
+		Consumer: "",
+		Life:     5,
+		Token:    "cc2c8f0a084657a50fa37c58520b40cb",
 	}
 	if !reflect.DeepEqual(token, goal) {
 		t.Fail()

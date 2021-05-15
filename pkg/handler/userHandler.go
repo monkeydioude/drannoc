@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/entity"
@@ -14,7 +12,7 @@ import (
 // UserCreate handles user creation form
 // POST /user
 func UserCreate(c *gin.Context) {
-	token, err := service.UserCreate(
+	err := service.UserCreate(
 		c.Request.Body,
 		repo.NewUser(),
 		repo.NewAuthToken(),
@@ -24,13 +22,8 @@ func UserCreate(c *gin.Context) {
 		res.Write(c, res.BadRequest(err.Error()))
 		return
 	}
-	if token == nil {
-		res.ServiceUnavailable("Could not create user", "Could not create user")
-		return
-	}
-	res.Ok(c, gin.H{
-		"data": token,
-	})
+
+	res.Ok(c, gin.H{})
 }
 
 // UserLogin handles user login form
@@ -58,16 +51,15 @@ func UserLogin(c *gin.Context) {
 	}
 
 	// create a new auth token on login
-	token, err := service.CreateAuthTokenNow(repo.NewAuthToken(), user.ID)
+	token := service.CreateAuthTokenNow(user.ID)
+	_, err = repo.NewAuthToken().Store(token)
 
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("could not create token", err.Error()))
 		return
 	}
-	maxAge := int(token.Expires - time.Now().Unix())
-	// setting up the AuthToken Cookie
-	c.SetCookie(config.AuthTokenLabel, token.GetToken(), maxAge, "/", "", false, false)
-	c.SetCookie(config.ConsumerLabel, user.ID, maxAge, "/", "", false, false)
+
+	service.SetCookies(token, user.GetID(), c)
 
 	res.Ok(c, gin.H{
 		"data": token,
@@ -77,10 +69,10 @@ func UserLogin(c *gin.Context) {
 // UserIndex retrieves user related data
 // GET /user
 func UserIndex(c *gin.Context) {
-	userID, err := c.Cookie("consumer")
+	userID := c.GetString(config.ConsumerLabel)
 
-	if err != nil {
-		res.Write(c, res.ServiceUnavailable("could not find userID", err.Error()))
+	if userID == "" {
+		res.Write(c, res.ServiceUnavailable("could not find userID", "no consumer in header"))
 		return
 	}
 
@@ -90,17 +82,52 @@ func UserIndex(c *gin.Context) {
 		return
 	}
 
+	prefs := &entity.UserPreferences{}
+	_, err = repo.NewUserPreferences().Load(prefs, userID)
+	if err != nil {
+		res.Write(c, res.ServiceUnavailable(err.Error(), err.Error()))
+		return
+	}
+	// obfuscate ID
+	user.ID = ""
+	prefs.ID = ""
+
 	res.Ok(c, gin.H{
-		"data": struct {
-			ID      string `json:"id"`
-			Email   string `json:"email"`
-			Login   string `json:"login"`
-			Created int64  `json:"created"`
-		}{
-			ID:      user.ID,
-			Email:   user.Email,
-			Login:   user.Login,
-			Created: user.Created,
+		"data": res.UserIndex{
+			User:        user,
+			Preferences: prefs,
 		},
 	})
+}
+
+// UserPreferencesUpdate modifies a user's data
+// in the Preferences object of a User
+// PUT /user/preferences
+func UserPreferencesUpdate(c *gin.Context) {
+	userID := c.GetString(config.ConsumerLabel)
+
+	if userID == "" {
+		res.Write(c, res.ServiceUnavailable("could not find userID", "no consumer in header"))
+		return
+	}
+
+	pref := &entity.UserPreferences{}
+	err := service.EntityFromRequestBody(c.Request.Body, pref)
+	if err != nil {
+		res.Write(c, res.ServiceUnavailable("could not generate new user", err.Error()))
+		return
+	}
+
+	if userID != pref.ID {
+		res.Write(c, res.Unauthorized("can not update user"))
+		return
+	}
+
+	err = repo.NewUserPreferences().Save(pref)
+	if err != nil {
+		res.Write(c, res.ServiceUnavailable("could not save user preferences", err.Error()))
+		return
+	}
+
+	res.Ok(c, gin.H{})
 }

@@ -19,8 +19,7 @@ func AuthDelete(c *gin.Context) {
 	}
 
 	// unsetting cookies, since user asked for logout
-	c.SetCookie(config.AuthTokenLabel, "", -1, "/", "", false, false)
-	c.SetCookie(config.ConsumerLabel, "", -1, "/", "", false, false)
+	service.UnsetCookies(c)
 	// OKKKK
 	res.Ok(c, gin.H{})
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
-	iEntity "github.com/monkeydioude/drannoc/pkg/entity"
 )
 
 // UserID type
@@ -43,13 +42,13 @@ func NewUser() *User {
 }
 
 // Load the document from the DB
-func (repo *User) Load(user *entity.User) (iEntity.Entity, error) {
-	return repo.FindFirst(user, db.Filter{"id": user.ID})
+func (repo *User) Load(user *entity.User) (entity.Entity, error) {
+	return repo.FindFirst(user, db.Filter{"id": user.ID}, db.Filter{"password": 0})
 }
 
 // Load the document from the DB
-func (repo *User) LoadFromCredentials(user *entity.User) (iEntity.Entity, error) {
-	return repo.FindFirst(user, db.Filter{"login": user.Login, "password": user.Password})
+func (repo *User) LoadFromCredentials(user *entity.User) (entity.Entity, error) {
+	return repo.FindFirst(user, db.Filter{"login": user.Login, "password": user.Password}, nil)
 }
 
 // Create is like store but do some setup before

@@ -48,6 +48,7 @@ func main() {
 		authorized.GET("/coin/:coin_id", handler.GetCoin)
 		authorized.GET("/coins", handler.GetCoins)
 		authorized.GET("/user", handler.UserIndex)
+		authorized.PUT("/user/preferences", handler.UserPreferencesUpdate)
 		authorized.DELETE("/auth", handler.AuthDelete)
 	}
 
