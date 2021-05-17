@@ -47,8 +47,18 @@ func (repo BaseRepo) GetCollection() *mongo.Collection {
 }
 
 // FindFirst finds the first element using a filter
-func (repo BaseRepo) FindFirst(entity entity.Entity, filter db.Filter) (entity.Entity, error) {
-	err := repo.GetCollection().FindOne(repo.GetContext(), filter).Decode(entity)
+func (repo BaseRepo) FindFirst(
+	entity entity.Entity,
+	filter db.Filter,
+	projection db.Filter,
+) (entity.Entity, error) {
+	err := repo.GetCollection().FindOne(
+		repo.GetContext(),
+		filter,
+		&options.FindOneOptions{
+			Projection: projection,
+		},
+	).Decode(entity)
 
 	if entity.GetID() == "" {
 		return nil, nil
@@ -59,7 +69,7 @@ func (repo BaseRepo) FindFirst(entity entity.Entity, filter db.Filter) (entity.E
 
 // FindFirstByID returns the first element using its ID
 func (repo BaseRepo) FindFirstByID(entity entity.Entity, id string) (entity.Entity, error) {
-	return repo.FindFirst(entity, db.Filter{"id": id})
+	return repo.FindFirst(entity, db.Filter{"id": id}, nil)
 }
 
 // Store implements Repository interface. Store creates
@@ -90,6 +100,18 @@ func (repo BaseRepo) Save(e entity.Entity) error {
 	update := map[string]entity.Entity{
 		"$set": e,
 	}
+	_, err := repo.GetCollection().UpdateOne(repo.context, db.Filter{"id": e.GetID()}, update, options)
+	return err
+}
+
+func (repo BaseRepo) Update(e entity.Entity, field string, value interface{}) error {
+	upsert := true
+	options := &options.UpdateOptions{
+		Upsert: &upsert,
+	}
+	update := make(map[string]map[string]interface{})
+	update["$set"] = make(map[string]interface{})
+	update["$set"][field] = value
 	_, err := repo.GetCollection().UpdateOne(repo.context, db.Filter{"id": e.GetID()}, update, options)
 	return err
 }

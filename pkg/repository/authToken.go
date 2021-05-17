@@ -6,7 +6,6 @@ import (
 
 	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
-	iEntity "github.com/monkeydioude/drannoc/pkg/entity"
 )
 
 // AuthRepository would be the implementation of the Repository interface
@@ -28,6 +27,6 @@ func NewAuthToken() *AuthToken {
 	}
 }
 
-func (repo *AuthToken) Load(token *entity.AuthToken) (iEntity.Entity, error) {
-	return repo.FindFirst(token, db.Filter{"token": token.Token})
+func (repo *AuthToken) Load(token *entity.AuthToken) (entity.Entity, error) {
+	return repo.FindFirst(token, db.Filter{"token": token.Token}, nil)
 }

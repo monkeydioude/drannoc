@@ -9,12 +9,11 @@ import (
 
 // User represents the data of a user
 type User struct {
-	ID       string `json:"id"`
+	ID       string `json:"id,omitempty"`
 	Login    string `json:"login"`
 	Created  int64  `json:"created"`
-	Password string `json:"password"`
-	// AuthID string `json:"authID"`
-	Email string `json:"email"`
+	Password string `json:"password,omitempty"`
+	Email    string `json:"email"`
 }
 
 // GetID the bolt.Entity interface
