@@ -29,3 +29,9 @@ func (p *UserPreferences) String() string {
 	}
 	return string(res)
 }
+
+func NewUserPreferences() *UserPreferences {
+	return &UserPreferences{
+		Coins: []string{""},
+	}
+}

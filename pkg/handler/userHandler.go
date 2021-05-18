@@ -82,7 +82,7 @@ func UserIndex(c *gin.Context) {
 		return
 	}
 
-	prefs := &entity.UserPreferences{}
+	prefs := entity.NewUserPreferences()
 	_, err = repo.NewUserPreferences().Load(prefs, userID)
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable(err.Error(), err.Error()))
