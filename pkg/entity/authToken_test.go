@@ -13,7 +13,7 @@ func init() {
 }
 
 func TestICanGenerateAuthToken(t *testing.T) {
-	token := GenerateAuthToken(time.Unix(0, 0), 10*time.Second, "")
+	token := GenerateAuthToken(time.Unix(0, 0), 10*time.Second, "", 5)
 	fmt.Println(token)
 	goal := &AuthToken{
 		Created:  0,

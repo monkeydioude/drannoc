@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
 	"github.com/monkeydioude/drannoc/pkg/service"
@@ -11,7 +10,7 @@ import (
 // UserLogout handles user loging out
 // DELETE /auth
 func AuthDelete(c *gin.Context) {
-	token := c.GetHeader(config.AuthTokenLabel)
+	token := c.GetHeader(c.GetString("AuthTokenLabel"))
 
 	// revoking token if exist in header
 	if token != "" {

@@ -49,14 +49,8 @@ func getCreatedAt(c *gin.Context, filters db.Filter, duration int64) db.Filter {
 	return filters
 }
 
-// CoinsGet retrieves coins rate history using filters.
-// Filters:
-//	- order int
-// 	- duration int64
-//  - coins string (comma "," separated list of coins)
-// 	- created_at map[string]int64 (using mongodb operators as keys)
-//
-// GET /coins
+// GetCoin
+// GET /coin
 func GetCoin(c *gin.Context) {
 	// filters used by mongodb.s Find
 	filters := db.Filter{}

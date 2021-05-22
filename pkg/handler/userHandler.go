@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	repo "github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
@@ -51,7 +50,7 @@ func UserLogin(c *gin.Context) {
 	}
 
 	// create a new auth token on login
-	token := service.CreateAuthTokenNow(user.ID)
+	token := service.CreateAuthTokenNow(user.ID, c.GetInt("TokenLivesMaxAmount"))
 	_, err = repo.NewAuthToken().Store(token)
 
 	if err != nil {
@@ -69,7 +68,7 @@ func UserLogin(c *gin.Context) {
 // UserIndex retrieves user related data
 // GET /user
 func UserIndex(c *gin.Context) {
-	userID := c.GetString(config.ConsumerLabel)
+	userID := c.GetString(c.GetString("ConsumerLabel"))
 
 	if userID == "" {
 		res.Write(c, res.ServiceUnavailable("could not find userID", "no consumer in header"))
@@ -104,7 +103,7 @@ func UserIndex(c *gin.Context) {
 // in the Preferences object of a User
 // PUT /user/preferences
 func UserPreferencesUpdate(c *gin.Context) {
-	userID := c.GetString(config.ConsumerLabel)
+	userID := c.GetString(c.GetString("ConsumerLabel"))
 
 	if userID == "" {
 		res.Write(c, res.ServiceUnavailable("could not find userID", "no consumer in header"))

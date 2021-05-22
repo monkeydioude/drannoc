@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"github.com/monkeydioude/drannoc/pkg/repository"
 	res "github.com/monkeydioude/drannoc/pkg/response"
@@ -17,7 +16,7 @@ func AuthRequired(c *gin.Context) {
 
 	if err != nil {
 		c.Abort()
-		res.Write(c, res.Unauthorized(config.UserLoginRoute))
+		res.Write(c, res.Unauthorized(c.GetString("UserLoginRoute")))
 		return
 	}
 
@@ -40,13 +39,13 @@ func AuthRequired(c *gin.Context) {
 		!token.IsValidNow() ||
 		token.Consumer != ids.Consumer {
 		routine.UnsetCookies(c)
-		res.Write(c, res.Unauthorized(config.UserLoginRoute))
+		res.Write(c, res.Unauthorized(c.GetString("UserLoginRoute")))
 		c.Abort()
 		return
 	}
 
 	// trying to regenerate the token
-	didItRegenerate := routine.TryRegenerateToken(token)
+	didItRegenerate := routine.TryRegenerateToken(token, c.GetInt("TokenLivesMaxAmount"))
 
 	// token tick once, applying tick alterations
 	// (removing a life of the token, for example)

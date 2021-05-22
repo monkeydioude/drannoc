@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/encrypt"
 )
 
@@ -109,6 +108,7 @@ func GenerateAuthToken(
 	start time.Time,
 	duration time.Duration,
 	consumer string,
+	tokenLives int,
 ) *AuthToken {
 	const len int = 12
 	var buffer bytes.Buffer
@@ -127,6 +127,6 @@ func GenerateAuthToken(
 		Duration: int(duration.Seconds()),
 		Token:    encrypt.MD5(buffer.Bytes()),
 		Consumer: consumer,
-		Life:     config.TokenLivesMaxAmount,
+		Life:     tokenLives,
 	}
 }
