@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
 	"github.com/monkeydioude/drannoc/pkg/misc"
@@ -15,10 +14,11 @@ import (
 // CreateAuthTokenNow is the auth token creation routine
 func CreateAuthTokenNow(
 	consumer string,
+	tokenLives int,
 ) *entity.AuthToken {
 	start := time.Now()
 	duration := misc.TokenDuration
-	token := entity.GenerateAuthToken(start, duration, consumer)
+	token := entity.GenerateAuthToken(start, duration, consumer, tokenLives)
 	return token
 }
 
@@ -49,12 +49,13 @@ func RevokeAuthToken(tokenRepo *repo.AuthToken, token string) error {
 // if we should regenerate a new
 func TryRegenerateToken(
 	token *entity.AuthToken,
+	tokenLives int,
 ) bool {
 	if !token.ShouldRemakeNow() {
 		return false
 	}
 
-	t := CreateAuthTokenNow(token.Consumer)
+	t := CreateAuthTokenNow(token.Consumer, tokenLives)
 	*token = *t
 
 	return true
@@ -66,8 +67,10 @@ type Identifiers struct {
 }
 
 func FindIdentifiers(c *gin.Context) (Identifiers, error) {
-	authToken, _ := c.Cookie(config.AuthTokenLabel)
-	consumer, _ := c.Cookie(config.ConsumerLabel)
+	authTokenLabel := c.GetString("AuthTokenLabel")
+	consumerLabel := c.GetString("ConsumerLabel")
+	authToken, _ := c.Cookie(authTokenLabel)
+	consumer, _ := c.Cookie(consumerLabel)
 
 	if authToken != "" && consumer != "" {
 		return Identifiers{
@@ -76,8 +79,8 @@ func FindIdentifiers(c *gin.Context) (Identifiers, error) {
 		}, nil
 	}
 
-	authToken = c.GetHeader(config.AuthTokenLabel)
-	consumer = c.GetHeader(config.ConsumerLabel)
+	authToken = c.GetHeader(authTokenLabel)
+	consumer = c.GetHeader(consumerLabel)
 
 	if authToken != "" && consumer != "" {
 		return Identifiers{

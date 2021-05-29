@@ -2,18 +2,33 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/monkeydioude/drannoc/pkg/config"
 	"github.com/monkeydioude/drannoc/pkg/db"
+	"github.com/monkeydioude/drannoc/pkg/entity"
 	"github.com/monkeydioude/drannoc/pkg/handler"
 	"github.com/monkeydioude/drannoc/pkg/middleware"
 )
 
+var CoinInfos []*entity.CoinInfo
+
+func BuildConfig() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("OriginDomain", os.Getenv("ORIGIN_DOMAIN"))
+		c.Set("AuthTokenLabel", "auth-token")
+		c.Set("ConsumerLabel", "consumer")
+		c.Set("UserLoginRoute", "/user/login")
+		c.Set("TokenLivesMaxAmount", 5)
+		c.Next()
+	}
+}
+
 // CORSMiddleware handles CORS rights and OPTIONS requests
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", config.OriginDomain)
+		c.Writer.Header().Set("Access-Control-Allow-Origin", c.GetString("OriginDomain"))
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		// @todo dinamycally add allowed headers ?
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, Authorization, accept, origin, Cache-Control, X-Requested-With, auth-token, consumer")
@@ -30,6 +45,7 @@ func CORSMiddleware() gin.HandlerFunc {
 
 func main() {
 	r := gin.New()
+	r.Use(BuildConfig())
 	r.Use(CORSMiddleware())
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -50,6 +66,8 @@ func main() {
 		authorized.GET("/user", handler.UserIndex)
 		authorized.PUT("/user/preferences", handler.UserPreferencesUpdate)
 		authorized.DELETE("/auth", handler.AuthDelete)
+		authorized.POST("/trade", handler.AddNewTrade)
+		authorized.PUT("/trade/:trade_id", handler.EditTrade)
 	}
 
 	r.Run(fmt.Sprintf(":%s", config.ServerPort))

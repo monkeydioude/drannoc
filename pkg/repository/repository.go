@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/monkeydioude/drannoc/pkg/db"
@@ -104,14 +105,19 @@ func (repo BaseRepo) Save(e entity.Entity) error {
 	return err
 }
 
-func (repo BaseRepo) Update(e entity.Entity, field string, value interface{}) error {
+func (repo BaseRepo) Update(e entity.Entity, fields []string, values []interface{}) error {
+	if len(fields) != len(values) {
+		return errors.New("should have the same amount of fields and values")
+	}
 	upsert := true
 	options := &options.UpdateOptions{
 		Upsert: &upsert,
 	}
 	update := make(map[string]map[string]interface{})
 	update["$set"] = make(map[string]interface{})
-	update["$set"][field] = value
+	for k, v := range fields {
+		update["$set"][v] = values[k]
+	}
 	_, err := repo.GetCollection().UpdateOne(repo.context, db.Filter{"id": e.GetID()}, update, options)
 	return err
 }
