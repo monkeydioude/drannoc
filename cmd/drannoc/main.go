@@ -61,13 +61,14 @@ func main() {
 	authorized.Use(middleware.AuthRequired)
 	{
 		authorized.GET("/coins/info", handler.CoinsInfo)
-		authorized.GET("/coin/:coin_id", handler.GetCoin)
-		authorized.GET("/coins", handler.GetCoins)
+		authorized.GET("/coin/:coin_id", handler.CoinGet)
+		authorized.GET("/coins", handler.CoinsGet)
 		authorized.GET("/user", handler.UserIndex)
 		authorized.PUT("/user/preferences", handler.UserPreferencesUpdate)
 		authorized.DELETE("/auth", handler.AuthDelete)
-		authorized.POST("/trade", handler.AddNewTrade)
-		authorized.PUT("/trade/:trade_id", handler.EditTrade)
+		authorized.POST("/trade", handler.TradeAdd)
+		authorized.PUT("/trade/:trade_id", handler.TradeEdit)
+		authorized.GET("/trades", handler.TradesGet)
 	}
 
 	r.Run(fmt.Sprintf(":%s", config.ServerPort))

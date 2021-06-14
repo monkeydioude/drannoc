@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/monkeydioude/drannoc/pkg/db"
 	"github.com/monkeydioude/drannoc/pkg/entity"
+	res "github.com/monkeydioude/drannoc/pkg/response"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -45,6 +46,21 @@ func (repo BaseRepo) CancelContext() {
 // by a repository. Implements Repository interface.
 func (repo BaseRepo) GetCollection() *mongo.Collection {
 	return repo.collection
+}
+
+// QueryAll queries mongoDB using a db.Query struct
+func (repo BaseRepo) QueryAll(q db.Query) (*mongo.Cursor, *res.Response) {
+	cursor, err := repo.GetCollection().Find(
+		repo.GetContext(),
+		q.Filters,
+		(*options.FindOptions)(&q.Options),
+	)
+
+	if err != nil {
+		return nil, res.ServiceUnavailable("could not query db", err.Error())
+	}
+
+	return cursor, nil
 }
 
 // FindFirst finds the first element using a filter
