@@ -41,9 +41,15 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
+	repoPref := repo.NewUserPreferences()
+	pref, _ := service.FetchUserPreferences(repoPref, user.ID)
+
 	service.SetCookies(token, user.GetID(), c)
 
 	res.Ok(c, gin.H{
-		"data": token,
+		"data": res.UserIndex{
+			User:        nil,
+			Preferences: pref,
+		},
 	})
 }
