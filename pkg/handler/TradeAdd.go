@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,8 @@ func TradeAdd(c *gin.Context) {
 	trade.Modified_at = trade.Created_at
 
 	trade.User_id = userID
+
+	fmt.Printf("%+v\n", trade)
 
 	if !trade.IsStorable() {
 		res.Write(c, res.BadRequest("incomplete payload"))
