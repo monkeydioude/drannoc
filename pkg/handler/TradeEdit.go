@@ -54,5 +54,4 @@ func TradeEdit(c *gin.Context) {
 	res.Ok(c, gin.H{
 		"data": trade.ID,
 	})
-	// fields, values := make(map[string]interface{})
 }
