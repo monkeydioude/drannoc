@@ -11,10 +11,11 @@ var directions = []string{"BUY", "SELL"}
 
 type Trade struct {
 	ID          string  `json:"id"`
-	Parent_id   string  `json:"parent_id,omitempty"`
-	User_id     string  `json:"user_id"`
+	Parent_id   string  `json:"parent_id"`
+	User_id     string  `json:"user_id,omitempty"`
 	Coin_id     string  `json:"coin_id"`
 	Created_at  int64   `json:"created_at"`
+	Traded_at   int64   `json:"traded_at"`
 	Modified_at int64   `json:"modified_at"`
 	Prices      Prices  `json:"prices"`
 	Direction   string  `json:"direction"`
@@ -55,20 +56,10 @@ func (t *Trade) IsStorable() bool {
 	return t.User_id != "" &&
 		t.Created_at != 0 &&
 		t.Modified_at != 0 &&
+		t.Traded_at != 0 &&
 		!t.Prices.IsEmpty() &&
 		t.IsValidDirection()
 }
-
-// func (t *Trade) GenerateUpdateFields() ([]string, []interface{}) {
-// 	fields := []string{}
-// 	values := []interface{}{}
-
-// 	if !t.Prices.IsEmpty() {
-// 		fields = append(fields, t.Prices)
-// 	}
-
-// 	return fields, values
-// }
 
 func (t *Trade) UpdateWith(mergeOver *Trade) {
 	if mergeOver.Coin_id != "" {

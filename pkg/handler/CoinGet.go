@@ -31,7 +31,7 @@ func getDuration(c *gin.Context) int64 {
 	return duration
 }
 
-func getCreatedAt(c *gin.Context, filters db.Filter, duration int64) db.Filter {
+func filtersAddCreatedAt(c *gin.Context, filters db.Filter, duration int64) db.Filter {
 	// milliseconds in db
 	created_at := time.Now().UnixNano() / 1000000
 
@@ -49,9 +49,9 @@ func getCreatedAt(c *gin.Context, filters db.Filter, duration int64) db.Filter {
 	return filters
 }
 
-// GetCoin
-// GET /coin
-func GetCoin(c *gin.Context) {
+// CoinGet
+// GET /coin/:coin_id
+func CoinGet(c *gin.Context) {
 	// filters used by mongodb.s Find
 	filters := db.Filter{}
 	// options used by mongodb.s Find
@@ -64,7 +64,7 @@ func GetCoin(c *gin.Context) {
 		filters,
 		options.Projection.(db.Filter),
 	)
-	filters = getCreatedAt(c, filters, duration)
+	filters = filtersAddCreatedAt(c, filters, duration)
 	options.Sort = db.Filter{"created_at": order}
 
 	repo := repository.NewPriceHistory()

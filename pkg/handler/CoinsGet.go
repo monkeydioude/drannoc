@@ -48,7 +48,7 @@ func coinsFiltersProjects(
 	return filters, projections
 }
 
-// GetCoins retrieves coins rate history using filters.
+// CoinsGet retrieves coins rate history using filters.
 // Filters:
 //	- order int
 // 	- duration int64
@@ -56,7 +56,7 @@ func coinsFiltersProjects(
 // 	- created_at map[string]int64 (using mongodb operators as keys)
 //
 // GET /coins
-func GetCoins(c *gin.Context) {
+func CoinsGet(c *gin.Context) {
 	// milliseconds in db
 	created_at := time.Now().UnixNano() / 1000000
 
@@ -105,18 +105,5 @@ func GetCoins(c *gin.Context) {
 	}
 	res.Ok(c, gin.H{
 		"data": coinsArr,
-	})
-}
-
-func CoinsInfo(c *gin.Context) {
-	coinInfos, err := repository.NewCoinInfo().LoadAll()
-	// error retrieving
-	if err != nil {
-		res.Write(c, res.ServiceUnavailable("could not retrieve coins info", err.Error()))
-		return
-	}
-
-	res.Ok(c, gin.H{
-		"data": coinInfos,
 	})
 }
