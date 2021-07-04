@@ -17,7 +17,7 @@ func TradeAdd(c *gin.Context) {
 	userID := c.GetString(c.GetString("ConsumerLabel"))
 
 	if userID == "" {
-		res.Write(c, res.ServiceUnavailable("could not find userID", "no consumer in header"))
+		res.Write(c, res.BadRequest("could not find userID"))
 		return
 	}
 

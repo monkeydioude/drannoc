@@ -40,7 +40,7 @@ func TradesGet(c *gin.Context) {
 	// unmarshall results from mongo cursor
 	cursor.All(tradeRepo.GetContext(), &results)
 
-	for i, _ := range results {
+	for i := range results {
 		results[i].User_id = ""
 	}
 

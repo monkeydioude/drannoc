@@ -68,6 +68,7 @@ func main() {
 		authorized.DELETE("/auth", handler.AuthDelete)
 		authorized.POST("/trade", handler.TradeAdd)
 		authorized.PUT("/trade/:trade_id", handler.TradeEdit)
+		authorized.DELETE("/trade/:trade_id", handler.TradeDelete)
 		authorized.GET("/trades", handler.TradesGet)
 	}
 

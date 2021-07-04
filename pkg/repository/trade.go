@@ -49,3 +49,13 @@ func (t *Trade) ParentExists(e *entity.Trade) (bool, *response.Response) {
 
 	return true, nil
 }
+
+// DeleteWithRelatives delete first every relatives document
+// then delete the matching id document
+func (t *Trade) DeleteWithRelatives(id string) error {
+	_, err := t.GetCollection().DeleteMany(t.GetContext(), db.Filter{"parent_id": id})
+	if err != nil {
+		return err
+	}
+	return t.Delete(id)
+}

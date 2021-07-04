@@ -104,8 +104,8 @@ func (repo BaseRepo) Store(entity entity.Entity) (string, error) {
 }
 
 // Delete deletes multipe elements matching the document ID
-func (repo BaseRepo) Delete(entity entity.Entity) error {
-	_, err := repo.GetCollection().DeleteMany(repo.context, db.Filter{"id": entity.GetID()})
+func (repo BaseRepo) Delete(id string) error {
+	_, err := repo.GetCollection().DeleteMany(repo.context, db.Filter{"id": id})
 	return err
 }
 
