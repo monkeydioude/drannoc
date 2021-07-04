@@ -63,12 +63,13 @@ func main() {
 		authorized.GET("/coins/info", handler.CoinsInfo)
 		authorized.GET("/coin/:coin_id", handler.CoinGet)
 		authorized.GET("/coins", handler.CoinsGet)
-		authorized.GET("/user", handler.UserIndex)
 		authorized.PUT("/user/preferences", handler.UserPreferencesUpdate)
+		authorized.GET("/user/preferences", handler.UserPreferencesGet)
+		authorized.GET("/user", handler.UserIndex)
 		authorized.DELETE("/auth", handler.AuthDelete)
-		authorized.POST("/trade", handler.TradeAdd)
 		authorized.PUT("/trade/:trade_id", handler.TradeEdit)
 		authorized.DELETE("/trade/:trade_id", handler.TradeDelete)
+		authorized.POST("/trade", handler.TradeAdd)
 		authorized.GET("/trades", handler.TradesGet)
 	}
 
