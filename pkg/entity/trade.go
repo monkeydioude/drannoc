@@ -78,6 +78,10 @@ func (t *Trade) UpdateWith(mergeOver *Trade) {
 		t.Amount = mergeOver.Amount
 	}
 
+	if mergeOver.Traded_at > 0 {
+		t.Traded_at = mergeOver.Traded_at
+	}
+
 	t.Modified_at = time.Now().UnixNano()
 }
 
