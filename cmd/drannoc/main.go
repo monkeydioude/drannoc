@@ -5,11 +5,11 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/monkeydioude/drannoc/pkg/config"
+	"github.com/monkeydioude/drannoc/internal/config"
+	"github.com/monkeydioude/drannoc/internal/entity"
+	"github.com/monkeydioude/drannoc/internal/handler"
+	"github.com/monkeydioude/drannoc/internal/middleware"
 	"github.com/monkeydioude/drannoc/pkg/db"
-	"github.com/monkeydioude/drannoc/pkg/entity"
-	"github.com/monkeydioude/drannoc/pkg/handler"
-	"github.com/monkeydioude/drannoc/pkg/middleware"
 )
 
 var CoinInfos []*entity.CoinInfo
