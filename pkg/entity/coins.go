@@ -28,3 +28,9 @@ func (c Stack) String() string {
 	}
 	return string(res)
 }
+
+func (c Stack) RoundCoinsPrices(limit int) {
+	for _, c := range c.Coins {
+		c.RoundPrices(limit)
+	}
+}

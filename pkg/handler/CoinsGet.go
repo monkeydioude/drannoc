@@ -97,7 +97,16 @@ func CoinsGet(c *gin.Context) {
 	}
 
 	coinsArr := []entity.Stack{}
-	cursor.All(repo.GetContext(), &coinsArr)
+
+	for {
+		if !cursor.Next(repo.GetContext()) {
+			break
+		}
+		s := entity.Stack{}
+		cursor.Decode(&s)
+		s.RoundCoinsPrices(2)
+		coinsArr = append(coinsArr, s)
+	}
 
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("could not get coins data [2]", err.Error()))
