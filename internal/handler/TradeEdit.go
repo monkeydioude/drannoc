@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/monkeydioude/drannoc/internal/entity"
+	in_gin "github.com/monkeydioude/drannoc/internal/gin"
 	"github.com/monkeydioude/drannoc/internal/repository"
 	res "github.com/monkeydioude/drannoc/internal/response"
 	"github.com/monkeydioude/drannoc/internal/service"
@@ -11,7 +12,7 @@ import (
 // TradeEdit edits a trade using a trade_id
 // PUT /trade/:trade_id
 func TradeEdit(c *gin.Context) {
-	userID := c.GetString(c.GetString("ConsumerLabel"))
+	userID := in_gin.GetUserIDFromContext(c)
 
 	if userID == "" {
 		res.Write(c, res.BadRequest("could not find userID"))

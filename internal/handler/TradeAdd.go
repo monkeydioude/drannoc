@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/monkeydioude/drannoc/internal/entity"
+	in_gin "github.com/monkeydioude/drannoc/internal/gin"
 	"github.com/monkeydioude/drannoc/internal/repository"
 	res "github.com/monkeydioude/drannoc/internal/response"
 	"github.com/monkeydioude/drannoc/internal/service"
@@ -14,7 +15,7 @@ import (
 // TradeAdd add a new trade in the history of a user
 // POST /trade
 func TradeAdd(c *gin.Context) {
-	userID := c.GetString(c.GetString("ConsumerLabel"))
+	userID := in_gin.GetUserIDFromContext(c)
 
 	if userID == "" {
 		res.Write(c, res.BadRequest("could not find userID"))
@@ -22,7 +23,7 @@ func TradeAdd(c *gin.Context) {
 	}
 
 	trade := entity.NewTrade()
-	// parse body and unmarshal a trade
+	// parse body and unmarshal a Trade
 	err := service.EntityFromRequestBody(c.Request.Body, trade)
 	if err != nil {
 		res.Write(c, res.ServiceUnavailable("could not add new trade", err.Error()))
@@ -37,7 +38,6 @@ func TradeAdd(c *gin.Context) {
 	// force created_at and modified_at
 	trade.Created_at = time.Now().UnixNano()
 	trade.Modified_at = trade.Created_at
-
 	trade.User_id = userID
 
 	if !trade.IsStorable() {

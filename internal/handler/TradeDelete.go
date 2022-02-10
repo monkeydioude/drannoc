@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	in_gin "github.com/monkeydioude/drannoc/internal/gin"
 	"github.com/monkeydioude/drannoc/internal/repository"
 	res "github.com/monkeydioude/drannoc/internal/response"
 )
@@ -11,7 +12,7 @@ import (
 // TradeDelete delete a trade using a trade_id
 // DELETE /trade/:trade_id
 func TradeDelete(c *gin.Context) {
-	userID := c.GetString(c.GetString("ConsumerLabel"))
+	userID := in_gin.GetUserIDFromContext(c)
 
 	if userID == "" {
 		res.Write(c, res.BadRequest("could not find userID"))
