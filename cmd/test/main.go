@@ -27,7 +27,7 @@ func BuildConfig() gin.HandlerFunc {
 // CORSMiddleware handles CORS rights and OPTIONS requests
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", c.GetString("OriginDomain"))
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		// @todo dinamycally add allowed headers ?
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, Authorization, accept, origin, Cache-Control, X-Requested-With, auth-token, consumer")
