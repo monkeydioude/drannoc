@@ -1,0 +1,446 @@
+[
+  {
+    "_id": { "$oid": "624b052f8111118845c94270" },
+    "id": "republic-protocol",
+    "symbol": "ren",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94272" },
+    "id": "maker",
+    "symbol": "mkr",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94274" },
+    "id": "elrond-erd-2",
+    "symbol": "egld",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94276" },
+    "id": "truebit-protocol",
+    "symbol": "tru",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94278" },
+    "id": "status",
+    "symbol": "snt",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9427a" },
+    "id": "polkadot",
+    "symbol": "dot",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9427c" },
+    "id": "storm",
+    "symbol": "stmx",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9427e" },
+    "id": "aion",
+    "symbol": "aion",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94280" },
+    "id": "fio-protocol",
+    "symbol": "fio",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94282" },
+    "id": "bitcoin-cash",
+    "symbol": "bch",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94284" },
+    "id": "bitcoin",
+    "symbol": "btc",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94286" },
+    "id": "compound-coin",
+    "symbol": "comp",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94288" },
+    "id": "quark-chain",
+    "symbol": "qkc",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9428a" },
+    "id": "filecoin",
+    "symbol": "fil",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9428c" },
+    "id": "wazirx",
+    "symbol": "wrx",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9428e" },
+    "id": "rune",
+    "symbol": "rune",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94290" },
+    "id": "dent",
+    "symbol": "dent",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94292" },
+    "id": "alien-worlds",
+    "symbol": "tlm",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94294" },
+    "id": "tron",
+    "symbol": "trx",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94296" },
+    "id": "internet-computer",
+    "symbol": "icp",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c94298" },
+    "id": "smooth-love-potion",
+    "symbol": "slp",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9429a" },
+    "id": "bittorrent-2",
+    "symbol": "btt",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9429c" },
+    "id": "eos",
+    "symbol": "eos",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c9429e" },
+    "id": "terra-luna",
+    "symbol": "luna",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942a0" },
+    "id": "my-neighbor-alice",
+    "symbol": "alice",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942a2" },
+    "id": "avalanche-2",
+    "symbol": "avax",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942a4" },
+    "id": "keep3rv1",
+    "symbol": "kp3r",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942a6" },
+    "id": "balancer",
+    "symbol": "bal",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942a8" },
+    "id": "basic-attention-token",
+    "symbol": "bat",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942aa" },
+    "id": "ardor",
+    "symbol": "ardr",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ac" },
+    "id": "matic-network",
+    "symbol": "matic",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ae" },
+    "id": "ankr",
+    "symbol": "ankr",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942b0" },
+    "id": "tezos",
+    "symbol": "xtz",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942b2" },
+    "id": "paris-saint-germain-fan-token",
+    "symbol": "psg",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942b4" },
+    "id": "1inch",
+    "symbol": "1inch",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942b6" },
+    "id": "zcash",
+    "symbol": "zec",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942b8" },
+    "id": "yearn-finance",
+    "symbol": "yfi",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ba" },
+    "id": "theta-token",
+    "symbol": "theta",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942bc" },
+    "id": "chainlink",
+    "symbol": "link",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942be" },
+    "id": "litecoin",
+    "symbol": "ltc",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942c0" },
+    "id": "binancecoin",
+    "symbol": "bnb",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942c2" },
+    "id": "iotex",
+    "symbol": "iotx",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942c4" },
+    "id": "golem",
+    "symbol": "glm",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942c6" },
+    "id": "shiba-inu",
+    "symbol": "shib",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942c8" },
+    "id": "vechain",
+    "symbol": "vet",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ca" },
+    "id": "district0x",
+    "symbol": "dnt",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942cc" },
+    "id": "havven",
+    "symbol": "snx",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ce" },
+    "id": "pancakeswap-token",
+    "symbol": "cake",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942d0" },
+    "id": "omisego",
+    "symbol": "omg",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942d2" },
+    "id": "mobox",
+    "symbol": "mbox",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942d4" },
+    "id": "sushi",
+    "symbol": "sushi",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942d6" },
+    "id": "solana",
+    "symbol": "sol",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942d8" },
+    "id": "stellar",
+    "symbol": "xlm",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942da" },
+    "id": "ripple",
+    "symbol": "xrp",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942dc" },
+    "id": "zilliqa",
+    "symbol": "zil",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942de" },
+    "id": "enjincoin",
+    "symbol": "enj",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942e0" },
+    "id": "dash",
+    "symbol": "dash",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942e2" },
+    "id": "leash",
+    "symbol": "leash",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942e4" },
+    "id": "ethereum",
+    "symbol": "eth",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942e6" },
+    "id": "coin98",
+    "symbol": "c98",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942e8" },
+    "id": "band-protocol",
+    "symbol": "band",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ea" },
+    "id": "qtum",
+    "symbol": "qtum",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b052f8111118845c942ec" },
+    "id": "axie-infinity",
+    "symbol": "axs",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05408111118845c943d7" },
+    "id": "the-sandbox",
+    "symbol": "sand",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05408111118845c943dd" },
+    "id": "uniswap",
+    "symbol": "uni",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05408111118845c943e2" },
+    "id": "0x",
+    "symbol": "zrx",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c943f2" },
+    "id": "cardano",
+    "symbol": "ada",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c943f8" },
+    "id": "chiliz",
+    "symbol": "chz",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c943ff" },
+    "id": "curve-dao-token",
+    "symbol": "crv",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c94405" },
+    "id": "dogecoin",
+    "symbol": "doge",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c94407" },
+    "id": "the-graph",
+    "symbol": "grt",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c94413" },
+    "id": "aave",
+    "symbol": "aave",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c94416" },
+    "id": "tether",
+    "symbol": "usdt",
+    "created_at": "{{CREATED_AT}}"
+  },
+  {
+    "_id": { "$oid": "624b05418111118845c94420" },
+    "id": "swipe",
+    "symbol": "sxp",
+    "created_at": "{{CREATED_AT}}"
+  }
+]
