@@ -1,0 +1,48 @@
+
+latest_entries_tmp_tpl_file_name_file := /tmp/latest_entries_export
+price_history_tmp_tpl_file_name_file := /tmp/price_history_export
+
+# PARAMS (a=b):
+# 	limit (integer): amount of retrieved documents.
+# 	output_dir (string): export file will be generated in this directory. Gets overwritten by "output_file". Conveniant for multiple export files not overwritting each other.
+# 	output_file (string): name of the export file. Overwrite "output_dir". Converniant for having a single export file, overwritting it every time.
+latest_entries_export:
+	$(eval tt := $(shell date +%s%N))
+	$(eval tmp_tpl_file_dir := $(shell if [ -z $(output_dir) ]; then echo /tmp; else echo $(output_dir); fi))
+	$(eval tmp_tpl_file := $(tmp_tpl_file_dir)/latest_entries-$(tt).json)
+	$(eval limit := $(shell if [ -z $(limit) ]; then echo 10; else echo $(limit); fi))
+	$(eval output_file := $(shell if [ -z $(output_file) ]; then echo $(tmp_tpl_file); else echo $(output_file); fi ))
+	docker-compose exec mongo mongoexport -u $(MONGO_ADMIN_USER) -p $(MONGO_ADMIN_PWD) --authenticationDatabase=admin -d coins -c latest_entries --quiet --jsonArray --limit=$(limit) --sort="{updated_at: -1}" > $(output_file)
+	echo $(output_file) > $(latest_entries_tmp_tpl_file_name_file)
+
+latest_entries_tpl_update: latest_entries_export
+	$(eval tmp_tpl_file := $(shell cat $(latest_entries_tmp_tpl_file_name_file)))
+	cat $(tmp_tpl_file) | sed 's/"updated_at":[0-9]*/"updated_at":"{{timestamp}}"/gi' > dev/latest_entries.tpl.json
+
+# PARAMS (a=b):
+# 	limit (integer): amount of retrieved documents.
+# 	output_dir (string): export file will be generated in this directory. Gets overwritten by "output_file". Conveniant for multiple export files not overwritting each other.
+# 	output_file (string): name of the export file. Overwrite "output_dir". Converniant for having a single export file, overwritting it every time.
+price_history_export:
+	$(eval tt := $(shell date +%s%N))
+	$(eval tmp_tpl_file_dir := $(shell if [ -z $(output_dir) ]; then echo /tmp; else echo $(output_dir); fi))
+	$(eval tmp_tpl_file := $(tmp_tpl_file_dir)/price_history-$(tt).json)
+	$(eval limit := $(shell if [ -z $(limit) ]; then echo 10; else echo $(limit); fi))
+	$(eval output_file := $(shell if [ -z $(output_file) ]; then echo $(tmp_tpl_file); else echo $(output_file); fi ))
+	docker-compose exec mongo mongoexport -u $(MONGO_ADMIN_USER) -p $(MONGO_ADMIN_PWD) --authenticationDatabase=admin -d coins -c price_history --quiet --jsonArray --limit=$(limit) --sort="{created_at: -1}" > $(output_file)
+	echo $(output_file) > $(price_history_tmp_tpl_file_name_file)
+
+price_history_tpl_update: price_history_export
+	$(eval tmp_tpl_file := $(shell cat $(price_history_tmp_tpl_file_name_file)))
+	cat $(tmp_tpl_file) | sed 's/"created_at":[0-9]*/"created_at":"{{timestamp}}"/gi' > dev/price_history.tpl.json
+
+docker_start:
+	docker-compose up -d
+
+mongo_shell: SHELL:=/bin/bash
+mongo_shell:
+	@source .env && docker-compose exec mongo mongo -u $(MONGO_ADMIN_USER) -p $(MONGO_ADMIN_PWD) 
+
+dev: SHELL:=/bin/bash
+dev: docker_start
+	cd ./cmd/drannoc && source .env && go run main.go
