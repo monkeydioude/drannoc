@@ -1,4 +1,4 @@
-.SILENT: import
+.SILENT: import generate_replaced_timestamp_tpl
 latest_entries_tmp_tpl_file_name_file := /tmp/latest_entries_export
 price_history_tmp_tpl_file_name_file := /tmp/price_history_export
 
