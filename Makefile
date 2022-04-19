@@ -1,4 +1,4 @@
-
+.SILENT: import
 latest_entries_tmp_tpl_file_name_file := /tmp/latest_entries_export
 price_history_tmp_tpl_file_name_file := /tmp/price_history_export
 
@@ -35,6 +35,36 @@ price_history_export:
 price_history_tpl_update: price_history_export
 	$(eval tmp_tpl_file := $(shell cat $(price_history_tmp_tpl_file_name_file)))
 	cat $(tmp_tpl_file) | sed 's/"created_at":[0-9]*/"created_at":"{{timestamp}}"/gi' > dev/price_history.tpl.json
+
+# This command is silent and won't produce a log but only one, with the resulting json after token replacement.
+# PARAMS (a=b):
+# 	file (string): path of the file that the {{timestamp}} token replacement will be used on.
+generate_replaced_timestamp_tpl:
+	$(eval pwd := $(shell pwd))
+	@docker run --volume=$(pwd)/dev:/data node:current-alpine node /data/descending_timestamp_replace.js $(file)
+
+# ENV VARS
+#	MONGO_ADMIN_USER (string): admin username. Should be passed as env var, not as parameters.
+#	MONGO_ADMIN_USER (string): admin username. Should be passed as env var, not as parameters.
+# PARAMS (a=b):
+# 	file (string): path of the file to import.
+#	db (string): name of the targeted Mongo DB.
+#	col (string): name of the targeted Mongo collection.
+#	mode (string): Optional. Default is "insert". Possible options are "insert|upsert|merge|delete"
+import:
+	$(eval mode := $(shell if [ -z $(mode) ]; then echo "insert"; else echo $(mode); fi ))
+	$(eval container := $(shell docker-compose ps -q mongo))
+	echo "Executing mongoimport using file='$(file)' db='$(db)' collection='$(col)' mode='$(mode)'"
+	docker cp $(file) $(container):/tmp/import.json
+	@docker-compose exec mongo mongoimport \
+		-u $(MONGO_ADMIN_USER) \
+		-p $(MONGO_ADMIN_PWD) \
+		--jsonArray \
+		-d $(db) \
+		-c $(col) \
+		--authenticationDatabase admin \
+		--mode $(mode) \
+		--file /tmp/import.json
 
 docker_start:
 	docker-compose up -d
