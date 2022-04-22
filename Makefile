@@ -39,9 +39,11 @@ price_history_tpl_update: price_history_export
 # This command is silent and won't produce a log but only one, with the resulting json after token replacement.
 # PARAMS (a=b):
 # 	file (string): path of the file that the {{timestamp}} token replacement will be used on.
+# 	delay (integer): (optional, default 60000) amount of milliseconds the timestamp value of each {{timestamp}} will be reduced after replace.
 generate_replaced_timestamp_tpl:
 	$(eval pwd := $(shell pwd))
-	@docker run --volume=$(pwd)/dev:/data node:current-alpine node /data/descending_timestamp_replace.js $(file)
+	$(eval timestamp_reduced := $(shell if [ -z $(delay) ]; then echo 60000; else echo $(delay); fi))
+	@docker run --volume=$(pwd)/dev:/data node:current-alpine node /data/descending_timestamp_replace.js $(file) $(delay)
 
 # ENV VARS
 #	MONGO_ADMIN_USER (string): admin username. Should be passed as env var, not as parameters.
